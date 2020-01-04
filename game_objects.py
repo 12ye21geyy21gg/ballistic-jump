@@ -100,13 +100,10 @@ class Camera:
         self.dx = 0
         self.dy = 0
 
-    def get_abs_x(self):
-        return self.x - self.view_width // 2
-
     def update(self):
         if self.followPlayer:
-            self.x = self.player.x
-            self.y = self.player.y
+            self.x = self.player.x - self.view_width // 2
+            self.y = self.player.y - self.view_height // 2
         else:
             self.x += self.dx
             self.y += self.dy
@@ -120,7 +117,7 @@ class Camera:
             self.followPlayer = True
 
 
-class Cursor:
+class Cursor(pygame.sprite.Sprite):
     def __init__(self, group):
         super().__init__(group)
         self.image = None
@@ -134,3 +131,9 @@ class Cursor:
     def connect_coords(self, vh):
         self.rect.x = self.x
         self.rect.y = vh - self.y - self.height
+
+
+class Background(pygame.sprite.Sprite):
+    def __init__(self, group):
+        super().__init__(group)
+        self.image = None
