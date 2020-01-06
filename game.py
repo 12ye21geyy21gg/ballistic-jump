@@ -34,7 +34,7 @@ class Game:
         if self.map.player.isFlying:
             dt = self.clock.tick() / 1000  # add time fractions
             fracs = abs(int(max(self.map.player.vx, self.map.player.vy)))
-            if fracs != 0:
+            if fracs != 0 and not self.debug:
                 dt = dt / fracs * KOEF
                 for i in range(fracs):
                     self.move_player_hidden(dt)
@@ -48,26 +48,27 @@ class Game:
         self.map.player.vy += self.map.gravity_accel * dt
         self.map.player.vx += self.map.player.calc_wind_accel(self.map.wind_accel) * dt
         platforms, bonuses = self.map.get_nearest_objects(self.map.player.x)
-        for i in platforms:
-            if self.map.player.collide_rect(i):
-                if i.r_pos == 1:
-                    self.map.player.isFlying = False
-                    self.map.player.y = i.y + i.height
-                    self.map.player.vx = 0
-                    self.map.player.vy = 0
-                elif i.r_pos == 2:
-                    self.map.player.vx = 0
-                    self.map.player.x = i.x - self.map.player.width
-                elif i.r_pos == 3:
-                    self.map.player.vx = 0
-                    self.map.player.x = i.x + i.width
-                elif i.r_pos == 4:
-                    self.map.player.vy = 0
-                    self.map.player.y = i.y - self.map.player.height
-            else:
-                i.r_pos = self.map.player.rel_pos(i)
-                if i.r_pos == 5:
-                    print('error')
+        if not self.debug:
+            for i in platforms:
+                if self.map.player.collide_rect(i):
+                    if i.r_pos == 1:
+                        self.map.player.isFlying = False
+                        self.map.player.y = i.y + i.height
+                        self.map.player.vx = 0
+                        self.map.player.vy = 0
+                    elif i.r_pos == 2:
+                        self.map.player.vx = 0
+                        self.map.player.x = i.x - self.map.player.width
+                    elif i.r_pos == 3:
+                        self.map.player.vx = 0
+                        self.map.player.x = i.x + i.width
+                    elif i.r_pos == 4:
+                        self.map.player.vy = 0
+                        self.map.player.y = i.y - self.map.player.height
+                else:
+                    i.r_pos = self.map.player.rel_pos(i)
+                    if i.r_pos == 5:
+                        print('error')
         for i in bonuses:
             if self.map.player.collide_rect(i):
                 if i.r_pos == 1:
@@ -100,6 +101,7 @@ class Game:
             self.graph_engine.set_objects(temp)
             self.camera_update()
             self.graph_engine.draw()
+            self.map.clean(self.map.player.x)
             pass
         else:
             pass  # call main menu
@@ -116,6 +118,7 @@ class Game:
         x = self.camera.x + x - self.map.player.x
         y = self.camera.y + y - self.map.player.y
         a = math.atan(y / x)
+        print(x, y, a * 180 / 3.14)
         self.map.player.vx = self.map.player.v0 * math.cos(a)
         self.map.player.vy = self.map.player.v0 * math.sin(a)
 

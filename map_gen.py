@@ -20,14 +20,18 @@ class Map:
         for i in self.platforms:
             if i.x >= -self.margin + px and i.x <= self.margin + px + self.view_width:
                 plats.append(i)
-            elif i.x <= -self.margin + px:
-                self.platforms.remove(i)
         for i in self.platforms:
             if i.x >= -self.margin + px and i.x <= self.margin + px + self.view_width:
                 bonus.append(i)
-            elif i.x <= -100 + px:
-                self.platforms.remove(i)
         return plats, bonus
+
+    def clean(self, px):
+        for i in self.platforms:
+            if i.x <= -self.margin + px:
+                self.platforms.remove(i)
+        for i in self.bonuses:
+            if i.x <= -self.margin + px:
+                self.bonuses.remove(i)
 
     def change_wind(self):
         self.wind_accel = random.random() * 2 - 2
@@ -61,7 +65,6 @@ class Map_Gen:
             self.prev_x += random.randint(0, self.hor_step) + 100
             dx = self.prev_x - dx
             if random.random() < self.bonus_chance:
-                print(self.prev_x - random.randint(0, dx - 75) + self.p_width, random.randint(0, self.ver_step) + 30, 1)
                 bonuses.append(game_objects.Bonus(self.prev_x - random.randint(0, dx - 75) + self.p_width,
                                                   random.randint(0, self.ver_step) + 30, 1,
                                                   self.group))  # max_type unknown
