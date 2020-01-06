@@ -2,7 +2,7 @@ import pygame, game_objects
 
 
 class Graphical_Engine:
-    def __init__(self, vw, vh, screen, camera, player, background):
+    def __init__(self, vw, vh, screen):
         self.view_width = vw
         self.view_height = vh
         self.screen = screen

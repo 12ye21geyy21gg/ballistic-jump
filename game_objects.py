@@ -63,7 +63,7 @@ class Object(pygame.sprite.Sprite):
 
 class Player(Object):
     def __init__(self, x, y, group):
-        super().__init__(x, y, 50, 70, group)
+        super().__init__(x, y, 20, 30, group)
         self.v0 = 10.0
         self.wind_protection = 0.0
         self.isFlying = False
@@ -81,7 +81,7 @@ class Platform(Object):
 
 class Bonus(Object):
     def __init__(self, x, y, type, group):  # type?
-        super().__init__(x, y, 75, 75, group)
+        super().__init__(x, y, 25, 25, group)
         self.type = type
         self.get_image_by_type()
 
