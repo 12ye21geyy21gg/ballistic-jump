@@ -12,6 +12,7 @@ class Map:
         self.view_width = vw
         self.view_height = vh
         self.margin = 100
+        self.background = game_objects.Background(group)
 
     def get_nearest_objects(self, px):  # px -> 0
         plats = list()
@@ -34,6 +35,14 @@ class Map:
     def set_view(self, vw, vh):
         self.view_width = vw
         self.view_height = vh
+
+    def set_sprites(self):
+        for i in self.platforms:
+            pass
+        for i in self.bonuses:
+            pass
+        pass
+
 
 
 class Map_Gen:

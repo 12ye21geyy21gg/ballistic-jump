@@ -8,13 +8,16 @@ class Graphical_Engine:
         self.screen = screen
         self.color = pygame.Color('black')
         self.temp_objects = list()
-        self.camera = camera
         self.mode = 2  # 1 main menu, 2 game,3 store
-        self.player = player
-        self.background = background
         self.isAiming = False
         self.x = 0
         self.y = 0
+
+    def prepare(self, player, background, camera):
+        self.background = background
+        self.player = player
+        self.camera = camera
+
 
     def clear_screen(self):
         self.screen.fill((0, 0, 0))
