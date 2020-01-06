@@ -10,7 +10,8 @@ class Main:
         self.graph_engine = graph_engine.Graphical_Engine(vw, vh, screen)
         self.graph_engine.mode = self.mode
         self.game = game.Game(vw, vh, screen, self.graph_engine)
-
+        self.x0 = 0
+        self.y0 = 0
         self.dx = 0
         self.dy = 0
         self.mouse_clock = pygame.time.Clock()
@@ -23,8 +24,11 @@ class Main:
             self.game.prepare()
 
     def pass_to_game_right(self):
-        dt = self.mouse_clock.tick() / 1000
-        self.game.pass_right(self.dx * dt * self.mouse_velocity, self.dy * dt * self.mouse_velocity)
+        if not self.game.camera.followPlayer:
+            dx = self.dx - self.x0
+            dy = self.dy - self.y0
+            dt = self.mouse_clock.tick() / 1000
+            self.game.pass_right(dx * dt * self.mouse_velocity, dy * dt * self.mouse_velocity)
 
     def update(self):
         if self.mode == 1:
@@ -58,25 +62,38 @@ if __name__ == '__main__':
                     if main.mode == 2:
                         main.game.right = True
                         main.mouse_clock.tick()
+                        main.x0 = event.pos[0]
+                        main.y0 = height - event.pos[1]
+                        main.dx = main.x0
+                        main.dy = main.y0
             if event.type == pygame.MOUSEBUTTONUP:
                 if event.button == 1:
                     if main.mode == 2:
                         main.game.left = False
                         main.graph_engine.isAiming = False
                         main.game.pass_left(event.pos[0], event.pos[1])
+
                 elif event.button == 3:
                     if main.mode == 2:
                         main.game.right = False
+                        main.x0 = 0
+                        main.y0 = 0
                         main.dx = 0
                         main.dy = 0
+                        main.game.rx = 0
+                        main.game.ry = 0
+                        main.game.camera.dx = 0
+                        main.game.camera.dy = 0
 
             if event.type == pygame.MOUSEMOTION:
                 if main.mode == 2:
                     if main.game.left:
                         main.game.pass_left(event.pos[0], event.pos[1])
-                    else:
-                        main.dx += event.rel[0]
-                        main.dy -= event.rel[1]
+                    elif main.game.right:
+                        main.dx = event.pos[0]
+                        main.dy = height - event.pos[1]
+
+
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_c:
                     if main.mode == 2:

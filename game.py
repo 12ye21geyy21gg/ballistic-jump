@@ -109,6 +109,8 @@ class Game:
     def camera_update(self):
         self.camera.dx = int(self.rx)
         self.camera.dy = int(self.ry)
+        self.rx = 0
+        self.ry = 0
         self.camera.update()
 
     def start_jump(self, x, y):

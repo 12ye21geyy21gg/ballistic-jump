@@ -96,7 +96,7 @@ class Camera:
         self.view_width = vw
         self.view_height = vh
         self.player = player
-        self.followPlayer = True
+        self.followPlayer = False
         self.dx = 0
         self.dy = 0
 
@@ -111,6 +111,8 @@ class Camera:
             self.dy = 0
 
     def change_state(self):
+        self.dx = 0
+        self.dy = 0
         if self.followPlayer:
             self.followPlayer = False
         else:
