@@ -9,10 +9,10 @@ class Map:
         self.player = game_objects.Player(10, 50, group)
         self.wind_accel = 0
         self.max_wind = 3
-        self.gravity_accel = -2.5
+        self.gravity_accel = -10
         self.view_width = vw
         self.view_height = vh
-        self.margin = 100
+        self.margin = self.view_width
         self.background = game_objects.Background(group)
 
     def get_nearest_objects(self, px):  # px -> 0

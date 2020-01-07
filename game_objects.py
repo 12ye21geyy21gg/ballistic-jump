@@ -64,7 +64,7 @@ class Object(pygame.sprite.Sprite):
 class Player(Object):
     def __init__(self, x, y, group):
         super().__init__(x, y, 20, 30, group)
-        self.v0 = 40.0
+        self.v0 = 70.0
         self.precision = 200
         self.wind_protection = 0.0
         self.distance = 0

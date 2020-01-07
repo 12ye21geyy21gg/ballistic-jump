@@ -12,7 +12,7 @@ class Game:
         self.sprites = pygame.sprite.Group()
         self.map = map_gen.Map(vw, vh, self.sprites)
         self.map_gen = map_gen.Map_Gen(self.sprites)
-        self.camera = game_objects.Camera(10, 50, vw, vh, self.map.player)  # ssss
+        self.camera = game_objects.Camera(-30, 0, vw, vh, self.map.player)  # ssss
         self.graph_engine = graph_engine  # graph_engine.Graphical_Engine(vw,vh,screen,self.camera,self.map.player,self.map.background)
         self.view_width = vw
         self.view_height = vh
@@ -24,7 +24,7 @@ class Game:
         self.ry = 0
         self.right = False
         self.left = False
-        self.time_scale = 5
+        self.time_scale = 6
         self.debug = True
     def prepare(self):
         self.graph_engine.prepare(self.map.player, self.map.background, self.camera, self.map)
@@ -35,13 +35,16 @@ class Game:
     def move_player(self):
         if self.map.player.isFlying:
             dt = self.clock.tick() / 1000 * self.time_scale  # add time fractions
-            fracs = abs(int(max(self.map.player.vx, self.map.player.vy)))
-            if fracs != 0 and not self.debug:
+            fracs = int(max(abs(self.map.player.vx), abs(self.map.player.vy)))
+
+            if fracs != 0:
                 dt = dt / fracs * KOEF
                 for i in range(fracs):
                     self.move_player_hidden(dt)
             else:
                 self.move_player_hidden(dt)
+            if self.map.player.x >= self.map_gen.prev_x - 2 * self.view_width:
+                self.map_gen.generate(self.map.platforms, self.map.bonuses, 50)
 
     def move_player_hidden(self, dt):
         self.map.player.x += self.map.player.vx * dt + (
@@ -95,9 +98,11 @@ class Game:
                 self.lx = 0
                 self.ly = 0
             self.move_player()
+            self.map.clean(self.map.player.x)
             temp, temp2 = self.map.get_nearest_objects(self.camera.x)
             temp.extend(temp2)
             temp.append(self.map.player)
+
             self.graph_engine.set_objects(temp)
             self.camera_update()
             self.graph_engine.draw()
