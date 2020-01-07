@@ -66,6 +66,11 @@ if __name__ == '__main__':
                         main.y0 = height - event.pos[1]
                         main.dx = main.x0
                         main.dy = main.y0
+                elif event.button == 5:
+
+                    if main.mode == 2:
+                        main.game.pass_player(event.pos[0], height - event.pos[1])
+                # print(event.button)
             if event.type == pygame.MOUSEBUTTONUP:
                 if event.button == 1:
                     if main.mode == 2:
