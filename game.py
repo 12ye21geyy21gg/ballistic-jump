@@ -24,15 +24,17 @@ class Game:
         self.ry = 0
         self.right = False
         self.left = False
+        self.time_scale = 20
         self.debug = True
     def prepare(self):
         self.graph_engine.prepare(self.map.player, self.map.background, self.camera)
         self.map_gen.generate(self.map.platforms, self.map.bonuses, 50)
         self.map.set_sprites()
+        self.map.change_wind()
 
     def move_player(self):
         if self.map.player.isFlying:
-            dt = self.clock.tick() / 1000  # add time fractions
+            dt = self.clock.tick() / 1000 * self.time_scale  # add time fractions
             fracs = abs(int(max(self.map.player.vx, self.map.player.vy)))
             if fracs != 0 and not self.debug:
                 dt = dt / fracs * KOEF
@@ -113,16 +115,22 @@ class Game:
         self.ry = 0
         self.camera.update()
 
-    def start_jump(self, x, y):
+    def start_jump(self, x, y):  # rel to center
         self.map.player.isFlying = True
         # x = x - self.map.player.x
         # y = y - self.map.player.y
-        x = self.camera.x + x - self.map.player.x
-        y = self.camera.y + y - self.map.player.y
-        a = math.atan(y / x)
+        x = self.camera.x + x - self.map.player.x - self.map.player.width // 2
+        y = self.camera.y + self.view_height - y - self.map.player.y - self.map.player.height // 2
+        length = math.sqrt(x ** 2 + y ** 2)
+        if length >= self.map.player.precision:
+            v0 = self.map.player.v0
+        else:
+            v0 = self.map.player.v0 * length / self.map.player.precision
+        a = math.atan2(y, x)
         print(x, y, a * 180 / 3.14)
-        self.map.player.vx = self.map.player.v0 * math.cos(a)
-        self.map.player.vy = self.map.player.v0 * math.sin(a)
+        self.map.player.vx = v0 * math.cos(a)  # * math.copysign(1,x)
+        self.map.player.vy = v0 * math.sin(a)  # * math.copysign(1,y)
+        self.clock.tick()
 
     def pass_left(self, x, y):
         self.lx = x

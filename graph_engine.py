@@ -47,8 +47,11 @@ class Graphical_Engine:
                     self.draw_object(i)
             self.draw_object(self.player)
             if self.isAiming:
-                pygame.draw.line(self.screen, pygame.Color('blue'), self.get_rel_coords(self.player), (self.x, self.y),
+                pygame.draw.line(self.screen, pygame.Color('blue'), self.get_rel_coords_center(self.player),
+                                 (self.x, self.y),
                                  2)
+                pygame.draw.circle(self.screen, pygame.Color('blue'), self.get_rel_coords_center(self.player),
+                                   int(self.player.precision), 1)
                 pass
 
         elif self.mode == 3:
@@ -66,4 +69,8 @@ class Graphical_Engine:
             pass
 
     def get_rel_coords(self, obj):
-        return obj.x - self.camera.x, self.view_height - (obj.height + obj.y - self.camera.y)
+        return int(obj.x - self.camera.x), int(self.view_height - (obj.height + obj.y - self.camera.y))
+
+    def get_rel_coords_center(self, obj):
+        return int(obj.x + obj.width // 2 - self.camera.x), int(
+            self.view_height - (obj.y - self.camera.y) - obj.height // 2)
