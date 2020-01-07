@@ -67,16 +67,13 @@ class Game:
                 elif i.r_pos == 4:
                     self.map.player.vy = 0
                     self.map.player.y = i.y - self.map.player.height
-            print(i.r_pos)
             i.r_pos = i.rel_pos(self.map.player)
-            if i.r_pos == 5:
-                print('error')
-            print(i.r_pos)
+
 
         for i in bonuses:
             if i.rel_pos(self.map.player) == 5:
-                if i.r_pos == 5:
-                    pass  # consume bonus
+                print('consume', i)
+                self.map.bonuses.remove(i)
 
         if self.debug:
             if self.map.player.y < 10:

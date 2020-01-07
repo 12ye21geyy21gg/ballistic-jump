@@ -20,7 +20,7 @@ class Map:
         for i in self.platforms:
             if i.x >= -self.margin + px and i.x <= self.margin + px + self.view_width:
                 plats.append(i)
-        for i in self.platforms:
+        for i in self.bonuses:
             if i.x >= -self.margin + px and i.x <= self.margin + px + self.view_width:
                 bonus.append(i)
         return plats, bonus
@@ -53,21 +53,35 @@ class Map_Gen:
     def __init__(self, group):
         self.hor_step = 300
         self.ver_step = 100
-        self.p_width = 100
-        self.p_height = 50
+        self.margin_width = 50
+        self.platform_width = 100
+        self.platform_height = 50
         self.prev_x = 0
+        self.dx = 0
         self.bonus_chance = 0.1
         self.group = group
 
     def generate(self, platforms, bonuses, N):
         for i in range(N):
-            dx = self.prev_x
-            self.prev_x += random.randint(0, self.hor_step) + 100
-            dx = self.prev_x - dx
-            if random.random() < self.bonus_chance:
-                bonuses.append(game_objects.Bonus(self.prev_x - random.randint(0, dx - 75) + self.p_width,
-                                                  random.randint(0, self.ver_step) + 30, 1,
-                                                  self.group))  # max_type unknown
+            dx = random.randint(0, self.hor_step) + self.margin_width
+            self.dx += dx
+            self.prev_x += dx
             t = game_objects.Platform(self.prev_x, random.randint(0, self.ver_step) + 30,
-                                      random.randint(10, self.p_width), random.randint(10, self.p_height), self.group)
+                                      random.randint(10, self.platform_width), random.randint(10, self.platform_height),
+                                      self.group)
             platforms.append(t)
+        for i in range(N):
+            if random.random() < self.bonus_chance:
+
+                isGood = False
+                while not isGood:
+                    isGood = True
+                    t = game_objects.Bonus(random.randint(self.prev_x - self.dx, self.prev_x),
+                                           random.randint(0, self.ver_step * 2) + 30 + self.ver_step, 1,
+                                           self.group)  # max type?
+                    for i in platforms:
+                        if i.rel_pos(t) == 5:
+                            isGood = False
+
+                bonuses.append(t)
+        self.dx = 0
