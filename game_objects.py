@@ -67,6 +67,7 @@ class Player(Object):
         self.v0 = 40.0
         self.precision = 200
         self.wind_protection = 0.0
+        self.distance = 0
         self.isFlying = False
         self.vx = 0.0
         self.vy = 0.0

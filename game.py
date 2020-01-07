@@ -27,7 +27,7 @@ class Game:
         self.time_scale = 5
         self.debug = True
     def prepare(self):
-        self.graph_engine.prepare(self.map.player, self.map.background, self.camera)
+        self.graph_engine.prepare(self.map.player, self.map.background, self.camera, self.map)
         self.map_gen.generate(self.map.platforms, self.map.bonuses, 50)
         self.map.set_sprites()
         self.map.change_wind()
@@ -85,6 +85,8 @@ class Game:
             if self.map.player.y + self.map.player.height < 0:
                 self.end = True
                 self.map.player.isFlying = False
+        self.map.player.distance = max(self.map.player.distance, self.map.player.x)
+
 
     def update(self):
         if not self.end:

@@ -8,6 +8,7 @@ class Map:
         self.group = group
         self.player = game_objects.Player(10, 50, group)
         self.wind_accel = 0
+        self.max_wind = 3
         self.gravity_accel = -2.5
         self.view_width = vw
         self.view_height = vh
@@ -34,7 +35,7 @@ class Map:
                 self.bonuses.remove(i)
 
     def change_wind(self):
-        self.wind_accel = random.random() * 2 - 2
+        self.wind_accel = random.random() * self.max_wind - self.max_wind / 2
 
     def set_view(self, vw, vh):
         self.view_width = vw
