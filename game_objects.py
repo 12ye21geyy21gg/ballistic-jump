@@ -63,9 +63,11 @@ class Object(pygame.sprite.Sprite):
 
 class Player(Object):
     def __init__(self, x, y, group):
-        super().__init__(x, y, 50, 70, group)
-        self.v0 = 10.0
+        super().__init__(x, y, 20, 30, group)
+        self.v0 = 70.0
+        self.precision = 200
         self.wind_protection = 0.0
+        self.distance = 0
         self.isFlying = False
         self.vx = 0.0
         self.vy = 0.0
@@ -81,7 +83,7 @@ class Platform(Object):
 
 class Bonus(Object):
     def __init__(self, x, y, type, group):  # type?
-        super().__init__(x, y, 75, 75, group)
+        super().__init__(x, y, 25, 25, group)
         self.type = type
         self.get_image_by_type()
 
@@ -96,7 +98,7 @@ class Camera:
         self.view_width = vw
         self.view_height = vh
         self.player = player
-        self.followPlayer = True
+        self.followPlayer = False
         self.dx = 0
         self.dy = 0
 
@@ -111,6 +113,8 @@ class Camera:
             self.dy = 0
 
     def change_state(self):
+        self.dx = 0
+        self.dy = 0
         if self.followPlayer:
             self.followPlayer = False
         else:
