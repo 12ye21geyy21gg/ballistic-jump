@@ -54,10 +54,29 @@ if __name__ == '__main__':
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:  # left
                     if main.mode == 2:
-                        main.game.left = True
-                        if not main.game.map.player.isFlying:
-                            main.graph_engine.isAiming = True
-                        main.game.pass_left(event.pos[0], event.pos[1])
+                        if not main.graph_engine.paused:
+                            main.game.left = True
+                            if not main.game.map.player.isFlying:
+                                main.graph_engine.isAiming = True
+                            main.game.pass_left(event.pos[0], event.pos[1])
+                        else:
+                            choice = main.game.graph_engine.menu.pass_coords(event.pos[0], event.pos[1])
+                            main.game.left = False
+                            if choice is not None:
+                                if choice == 1:
+                                    if main.game.end:
+                                        main.game.restart()
+                                        main.game.prepare()
+                                    main.graph_engine.paused = False
+                                elif choice == 2:
+                                    pass
+                                elif choice == 3:
+                                    # delete save
+                                    main.game.restart()
+                                    main.game.prepare()
+                                    main.graph_engine.paused = False
+                                elif choice == 4:
+                                    running = False
                 elif event.button == 3:  # right
                     if main.mode == 2:
                         main.game.right = True
@@ -74,9 +93,10 @@ if __name__ == '__main__':
             if event.type == pygame.MOUSEBUTTONUP:
                 if event.button == 1:
                     if main.mode == 2:
-                        main.game.left = False
-                        main.graph_engine.isAiming = False
-                        main.game.pass_left(event.pos[0], event.pos[1])
+                        if main.game.left and not main.game.map.player.isFlying:
+                            main.game.left = False
+                            main.graph_engine.isAiming = False
+                            main.game.pass_left(event.pos[0], event.pos[1])
 
                 elif event.button == 3:
                     if main.mode == 2:
@@ -103,6 +123,9 @@ if __name__ == '__main__':
                 if event.key == pygame.K_c:
                     if main.mode == 2:
                         main.game.camera.change_state()
+                if event.key == pygame.K_ESCAPE:
+                    if main.mode == 2:
+                        main.game.pause()
         main.update()
         pygame.display.flip()
 

@@ -26,15 +26,30 @@ class Game:
         self.left = False
         self.time_scale = 6
         self.debug = True
+        self.map.set_sprites()
     def prepare(self):
         self.graph_engine.prepare(self.map.player, self.map.background, self.camera, self.map)
         self.map_gen.generate(self.map.platforms, self.map.bonuses, 50)
-        self.map.set_sprites()
         self.map.change_wind()
+
+    def restart(self):
+        self.clock = pygame.time.Clock()
+        self.end = False
+        self.lx = 0
+        self.ly = 0
+        self.rx = 0
+        self.ry = 0
+        self.right = False
+        self.left = False
+        self.time_scale = 6
+        self.debug = True
+        self.map = map_gen.Map(self.view_width, self.view_height, self.sprites)
+        self.map_gen = map_gen.Map_Gen(self.sprites)
+        self.camera = game_objects.Camera(-30, 0, self.view_width, self.view_height, self.map.player)
 
     def move_player(self):
         if self.map.player.isFlying:
-            dt = self.clock.tick() / 1000 * self.time_scale  # add time fractions
+            dt = self.clock.tick() / 1000 * self.time_scale
             fracs = int(max(abs(self.map.player.vx), abs(self.map.player.vy)))
 
             if fracs != 0:
@@ -78,22 +93,18 @@ class Game:
                 print('consume', i)
                 self.map.bonuses.remove(i)
 
-        if self.debug:
-            if self.map.player.y < 10:
-                self.map.player.y = 10
-                self.map.player.isFlying = False
-                self.map.player.vx = 0
-                self.map.player.vy = 0
-        else:
-            if self.map.player.y + self.map.player.height < 0:
-                self.end = True
-                self.map.player.isFlying = False
+        if self.map.player.y + self.map.player.height < 0:
+            self.end = True
+            self.graph_engine.paused = True
+            self.map.player.isFlying = False
         self.map.player.distance = max(self.map.player.distance, self.map.player.x)
 
 
     def update(self):
-        if not self.end:
+        if not self.end and not self.graph_engine.paused:
+
             if not self.map.player.isFlying and not self.left and self.lx != 0 and self.ly != 0:
+                print(self.left, self.lx, self.ly)
                 self.start_jump(self.lx, self.ly)
                 self.lx = 0
                 self.ly = 0
@@ -108,7 +119,7 @@ class Game:
             self.graph_engine.draw()
             pass
         else:
-            pass  # call main menu
+            self.graph_engine.draw()
 
     def camera_update(self):
         self.camera.dx = int(self.rx)
@@ -134,17 +145,27 @@ class Game:
         self.clock.tick()
 
     def pass_left(self, x, y):
-        self.lx = x
-        self.ly = y
-        # self.graph_engine.isAiming = True
-        self.graph_engine.x = x
-        self.graph_engine.y = y
+        if not self.graph_engine.paused:
+            self.lx = x
+            self.ly = y
+            # self.graph_engine.isAiming = True
+            self.graph_engine.x = x
+            self.graph_engine.y = y
 
     def pass_right(self, dx, dy):  # dx,dy - float
         # dy is not inversed
-        self.rx += dx
-        self.ry += dy
+        if not self.graph_engine.paused:
+            self.rx += dx
+            self.ry += dy
 
     def pass_player(self, x, y):
         self.map.player.x = self.camera.x + x
         self.map.player.y = self.camera.y + y
+
+    def pause(self):
+        if not self.end:
+            if self.graph_engine.paused:
+                self.graph_engine.paused = False
+                self.clock.tick()
+            else:
+                self.graph_engine.paused = True
