@@ -128,6 +128,9 @@ if __name__ == '__main__':
                 if event.key == pygame.K_SPACE:
                     if main.mode == 2:
                         main.game.use_first()
+                if event.key == pygame.K_LSHIFT:
+                    if main.mode == 2:
+                        main.game.use_second()
         main.update()
         pygame.display.flip()
 

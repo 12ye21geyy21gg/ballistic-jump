@@ -90,6 +90,7 @@ class Game:
 
         for i in bonuses:
             if i.rel_pos(self.map.player) == 5:
+                print(i.type)
                 self.map.player.bonuses.append(i)
                 self.map.bonuses.remove(i)
 
@@ -139,6 +140,8 @@ class Game:
         else:
             v0 = self.map.player.v0 * length / self.map.player.precision
         a = math.atan2(y, x)
+        v0 *= self.map.player.boost
+        self.map.player.boost = 1
         self.map.player.vx = v0 * math.cos(a)  # * math.copysign(1,x)
         self.map.player.vy = v0 * math.sin(a)  # * math.copysign(1,y)
         self.clock.tick()
@@ -177,5 +180,12 @@ class Game:
                 self.map.player.vy = 0
                 self.map.platforms.append(
                     game_objects.Platform(self.map.player.x, self.map.player.y - 30, 20, 30, self.sprites))
+                self.map.player.bonuses.remove(i)
+                break
+
+    def use_second(self):
+        for i in self.map.player.bonuses:
+            if i.type == 2 and not self.graph_engine.paused and not self.map.player.isFlying and self.map.player.boost == 1:
+                self.map.player.boost = self.map_gen.boost
                 self.map.player.bonuses.remove(i)
                 break
