@@ -86,7 +86,6 @@ if __name__ == '__main__':
                         main.dx = main.x0
                         main.dy = main.y0
                 elif event.button == 5:
-
                     if main.mode == 2:
                         main.game.pass_player(event.pos[0], height - event.pos[1])
                 # print(event.button)
@@ -126,6 +125,9 @@ if __name__ == '__main__':
                 if event.key == pygame.K_ESCAPE:
                     if main.mode == 2:
                         main.game.pause()
+                if event.key == pygame.K_SPACE:
+                    if main.mode == 2:
+                        main.game.use_first()
         main.update()
         pygame.display.flip()
 
