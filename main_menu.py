@@ -25,7 +25,6 @@ class Main_Menu:
             pygame.blit(text, r)
 
     def pass_coords(self, x, y):
-        print('1')
         if x >= self.margin_hor and x <= self.margin_hor + self.button_width:
             if y >= self.margin_vert and y <= self.margin_vert + self.button_height:
 

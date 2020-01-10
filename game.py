@@ -1,4 +1,4 @@
-import game_objects, map_gen, graph_engine, pygame, math
+import game_objects, map_gen, graph_engine, pygame, math, random
 
 KOEF = 1
 
@@ -90,7 +90,8 @@ class Game:
 
         for i in bonuses:
             if i.rel_pos(self.map.player) == 5:
-                print('consume', i)
+                print(i.type)
+                self.map.player.bonuses.append(i)
                 self.map.bonuses.remove(i)
 
         if self.map.player.y + self.map.player.height < 0:
@@ -104,7 +105,6 @@ class Game:
         if not self.end and not self.graph_engine.paused:
 
             if not self.map.player.isFlying and not self.left and self.lx != 0 and self.ly != 0:
-                print(self.left, self.lx, self.ly)
                 self.start_jump(self.lx, self.ly)
                 self.lx = 0
                 self.ly = 0
@@ -140,6 +140,8 @@ class Game:
         else:
             v0 = self.map.player.v0 * length / self.map.player.precision
         a = math.atan2(y, x)
+        v0 *= self.map.player.boost
+        self.map.player.boost = 1
         self.map.player.vx = v0 * math.cos(a)  # * math.copysign(1,x)
         self.map.player.vy = v0 * math.sin(a)  # * math.copysign(1,y)
         self.clock.tick()
@@ -169,3 +171,21 @@ class Game:
                 self.clock.tick()
             else:
                 self.graph_engine.paused = True
+
+    def use_first(self):
+        for i in self.map.player.bonuses:
+            if i.type == 1 and not self.graph_engine.paused and self.map.player.isFlying:
+                self.map.player.isFlying = False
+                self.map.player.vx = 0
+                self.map.player.vy = 0
+                self.map.platforms.append(
+                    game_objects.Platform(self.map.player.x, self.map.player.y - 30, 20, 30, self.sprites))
+                self.map.player.bonuses.remove(i)
+                break
+
+    def use_second(self):
+        for i in self.map.player.bonuses:
+            if i.type == 2 and not self.graph_engine.paused and not self.map.player.isFlying and self.map.player.boost == 1:
+                self.map.player.boost = self.map_gen.boost
+                self.map.player.bonuses.remove(i)
+                break

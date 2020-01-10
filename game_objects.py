@@ -71,7 +71,8 @@ class Player(Object):
         self.isFlying = False
         self.vx = 0.0
         self.vy = 0.0
-
+        self.bonuses = list()
+        self.boost = 1
     def calc_wind_accel(self, wind_a):
         return (1 - self.wind_protection) * wind_a
 

@@ -57,9 +57,11 @@ class Map_Gen:
         self.margin_width = 50
         self.platform_width = 100
         self.platform_height = 50
+        self.max_bonuses = 2
         self.prev_x = 0
         self.dx = 0
         self.bonus_chance = 0.1
+        self.boost = 5
         self.group = group
 
     def generate(self, platforms, bonuses, N):
@@ -78,7 +80,8 @@ class Map_Gen:
                 while not isGood:
                     isGood = True
                     t = game_objects.Bonus(random.randint(self.prev_x - self.dx, self.prev_x),
-                                           random.randint(0, self.ver_step * 2) + 30 + self.ver_step, 1,
+                                           random.randint(0, self.ver_step * 2) + 30 + self.ver_step,
+                                           random.randint(1, self.max_bonuses),
                                            self.group)  # max type?
                     for i in platforms:
                         if i.rel_pos(t) == 5:
