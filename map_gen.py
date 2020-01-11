@@ -7,6 +7,7 @@ class Map:
         self.bonuses = list()  # [x,y,type]
         self.group = group
         self.player = game_objects.Player(10, 50, group)
+        self.platforms.append(game_objects.Platform(10, 20, 20, 30, self.group))
         self.wind_accel = 0
         self.max_wind = 3
         self.gravity_accel = -10
@@ -47,6 +48,15 @@ class Map:
         for i in self.bonuses:
             pass
         pass
+
+    def reset(self):
+        self.player.vx = 0
+        self.player.vy = 0
+        self.player.isFlying = False
+        self.player.x = 10
+        self.player.y = 50
+        self.player.distance = 0
+        self.platforms.append(game_objects.Platform(10, 20, 20, 30, self.group))
 
 
 

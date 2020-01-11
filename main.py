@@ -1,4 +1,4 @@
-import pygame, graph_engine, game
+import pygame, graph_engine, game, saver, os
 
 
 class Main:
@@ -8,8 +8,9 @@ class Main:
         self.screen = screen
         self.mode = 2
         self.graph_engine = graph_engine.Graphical_Engine(vw, vh, screen)
+        self.saver = saver.Saver()
         self.graph_engine.mode = self.mode
-        self.game = game.Game(vw, vh, screen, self.graph_engine)
+        self.game = game.Game(vw, vh, screen, self.graph_engine, self.saver)
         self.x0 = 0
         self.y0 = 0
         self.dx = 0
@@ -46,6 +47,7 @@ if __name__ == '__main__':
     screen = pygame.display.set_mode(size)
     main = Main(width, height, screen)
     main.prepare()
+
     running = True
     while running:
         for event in pygame.event.get():
@@ -72,7 +74,10 @@ if __name__ == '__main__':
                                     pass
                                 elif choice == 3:
                                     # delete save
-                                    main.game.restart()
+                                    if os.path.isfile('data/save.dat'):
+                                        os.remove('data/save.dat')
+                                    main.game = game.Game(main.view_width, main.view_height, main.screen,
+                                                          main.graph_engine, main.saver)
                                     main.game.prepare()
                                     main.graph_engine.paused = False
                                 elif choice == 4:

@@ -8,10 +8,16 @@ def dist(x1, y1, x2, y2):
 
 
 class Game:
-    def __init__(self, vw, vh, screen, graph_engine):
+    def __init__(self, vw, vh, screen, graph_engine, saver):
         self.sprites = pygame.sprite.Group()
-        self.map = map_gen.Map(vw, vh, self.sprites)
-        self.map_gen = map_gen.Map_Gen(self.sprites)
+        self.saver = saver
+        self.map_gen = self.load_map_gen()
+        if self.map_gen is None:
+            self.map_gen = map_gen.Map_Gen(self.sprites)
+        self.map = self.load_map()
+        if self.map is None:
+            self.map = map_gen.Map(vw, vh, self.sprites)
+            self.map_gen.generate(self.map.platforms, self.map.bonuses, 50)
         self.camera = game_objects.Camera(-30, 0, vw, vh, self.map.player)  # ssss
         self.graph_engine = graph_engine  # graph_engine.Graphical_Engine(vw,vh,screen,self.camera,self.map.player,self.map.background)
         self.view_width = vw
@@ -27,9 +33,23 @@ class Game:
         self.time_scale = 6
         self.debug = True
         self.map.set_sprites()
+        self.isUpdated = True
+
+    def load_map(self):
+        t = self.saver.load()
+        if t is not None:
+            return t[0]
+
+    def load_map_gen(self):
+        t = self.saver.load()
+        if t is not None:
+            return t[1]
     def prepare(self):
-        self.graph_engine.prepare(self.map.player, self.map.background, self.camera, self.map)
-        self.map_gen.generate(self.map.platforms, self.map.bonuses, 50)
+        self.graph_engine.prepare(self.camera, self.map)
+        temp, temp2 = self.map.get_nearest_objects(self.camera.x)
+        temp.extend(temp2)
+        temp.append(self.map.player)
+        self.graph_engine.set_objects(temp)
         self.map.change_wind()
 
     def restart(self):
@@ -43,10 +63,13 @@ class Game:
         self.left = False
         self.time_scale = 6
         self.debug = True
-        self.map = map_gen.Map(self.view_width, self.view_height, self.sprites)
+        self.map.bonuses.clear()
+        self.map.platforms.clear()
+        self.map.reset()
+        self.map.change_wind()
         self.map_gen = map_gen.Map_Gen(self.sprites)
         self.camera = game_objects.Camera(-30, 0, self.view_width, self.view_height, self.map.player)
-
+        self.map_gen.generate(self.map.platforms, self.map.bonuses, 50)
     def move_player(self):
         if self.map.player.isFlying:
             dt = self.clock.tick() / 1000 * self.time_scale
@@ -90,7 +113,6 @@ class Game:
 
         for i in bonuses:
             if i.rel_pos(self.map.player) == 5:
-                print(i.type)
                 self.map.player.bonuses.append(i)
                 self.map.bonuses.remove(i)
 
@@ -117,6 +139,10 @@ class Game:
             self.graph_engine.set_objects(temp)
             self.camera_update()
             self.graph_engine.draw()
+            if not self.isUpdated and not self.map.player.isFlying and not self.end:
+                self.map.player.update_money()
+                self.saver.save([self.map, self.map_gen])
+                self.isUpdated = True
             pass
         else:
             self.graph_engine.draw()
@@ -129,6 +155,7 @@ class Game:
         self.camera.update()
 
     def start_jump(self, x, y):  # rel to center
+        self.isUpdated = False
         self.map.player.isFlying = True
         # x = x - self.map.player.x
         # y = y - self.map.player.y
