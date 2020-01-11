@@ -20,11 +20,12 @@ class Graphical_Engine:
         self.y = -1
         self.information_font = pygame.font.Font('data/FreeSans.ttf', 15)
 
-    def prepare(self, player, background, camera, map):
-        self.background = background
-        self.player = player
+    def prepare(self, camera, map):
+
         self.camera = camera
         self.map = map
+        self.player = self.map.player
+        self.background = self.map.background
 
     def clear_screen(self):
         self.screen.fill((0, 0, 0))

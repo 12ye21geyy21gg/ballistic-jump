@@ -73,8 +73,12 @@ class Player(Object):
         self.vy = 0.0
         self.bonuses = list()
         self.boost = 1
+        self.money = 0
     def calc_wind_accel(self, wind_a):
         return (1 - self.wind_protection) * wind_a
+
+    def update_money(self):
+        self.money = self.distance // 100
 
 
 class Platform(Object):
@@ -99,7 +103,7 @@ class Camera:
         self.view_width = vw
         self.view_height = vh
         self.player = player
-        self.followPlayer = False
+        self.followPlayer = True
         self.dx = 0
         self.dy = 0
 

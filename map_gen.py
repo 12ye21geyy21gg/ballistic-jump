@@ -48,6 +48,14 @@ class Map:
             pass
         pass
 
+    def reset(self):
+        self.player.vx = 0
+        self.player.vy = 0
+        self.player.isFlying = False
+        self.player.x = 10
+        self.player.y = 50
+        self.player.distance = 0
+
 
 
 class Map_Gen:
