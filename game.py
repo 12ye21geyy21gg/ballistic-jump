@@ -46,6 +46,10 @@ class Game:
             return t[1]
     def prepare(self):
         self.graph_engine.prepare(self.camera, self.map)
+        temp, temp2 = self.map.get_nearest_objects(self.camera.x)
+        temp.extend(temp2)
+        temp.append(self.map.player)
+        self.graph_engine.set_objects(temp)
         self.map.change_wind()
 
     def restart(self):
@@ -59,10 +63,9 @@ class Game:
         self.left = False
         self.time_scale = 6
         self.debug = True
-        self.map.reset()
-        print(self.map.player.x, self.map.player.y)
         self.map.bonuses.clear()
         self.map.platforms.clear()
+        self.map.reset()
         self.map.change_wind()
         self.map_gen = map_gen.Map_Gen(self.sprites)
         self.camera = game_objects.Camera(-30, 0, self.view_width, self.view_height, self.map.player)
@@ -110,7 +113,6 @@ class Game:
 
         for i in bonuses:
             if i.rel_pos(self.map.player) == 5:
-                print(i.type)
                 self.map.player.bonuses.append(i)
                 self.map.bonuses.remove(i)
 
@@ -123,7 +125,6 @@ class Game:
 
     def update(self):
         if not self.end and not self.graph_engine.paused:
-
 
             if not self.map.player.isFlying and not self.left and self.lx != 0 and self.ly != 0:
                 self.start_jump(self.lx, self.ly)
@@ -138,7 +139,7 @@ class Game:
             self.graph_engine.set_objects(temp)
             self.camera_update()
             self.graph_engine.draw()
-            if not self.isUpdated and not self.map.player.isFlying:
+            if not self.isUpdated and not self.map.player.isFlying and not self.end:
                 self.map.player.update_money()
                 self.saver.save([self.map, self.map_gen])
                 self.isUpdated = True
@@ -156,7 +157,6 @@ class Game:
     def start_jump(self, x, y):  # rel to center
         self.isUpdated = False
         self.map.player.isFlying = True
-        print(self.map.player)
         # x = x - self.map.player.x
         # y = y - self.map.player.y
         x = self.camera.x + x - self.map.player.x - self.map.player.width // 2
