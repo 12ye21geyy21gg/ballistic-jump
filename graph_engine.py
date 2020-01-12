@@ -1,4 +1,4 @@
-import pygame, game_objects, main_menu
+import pygame, game_objects, main_menu, math
 
 
 class Graphical_Engine:
@@ -19,6 +19,8 @@ class Graphical_Engine:
         self.x = -1
         self.y = -1
         self.information_font = pygame.font.Font('data/FreeSans.ttf', 15)
+        self.information_font.set_bold(True)
+        self.information_color = pygame.Color('#875704')
 
     def prepare(self, camera, map):
 
@@ -60,6 +62,23 @@ class Graphical_Engine:
                                  2)
                 pygame.draw.circle(self.screen, pygame.Color('blue'), self.get_rel_coords_center(self.player),
                                    int(self.player.precision), 1)
+                x = self.x - self.get_rel_coords_center(self.player)[0]
+                y = self.y - self.get_rel_coords_center(self.player)[1]
+                length = math.sqrt(x ** 2 + y ** 2)
+
+                if length >= self.map.player.precision:
+                    v0 = self.map.player.v0
+                else:
+                    v0 = self.map.player.v0 * length / self.map.player.precision
+                v0 *= self.player.boost
+                x = self.get_rel_coords_center(self.player)[0] + x // 2
+                y = self.get_rel_coords_center(self.player)[1] + y // 2
+                temp = self.information_font.render(f'{round(abs(v0), 2)}', True,
+                                                    pygame.Color('#0cdff2'))
+                temp_r = temp.get_rect()
+                temp_r.x = x
+                temp_r.y = y
+                self.screen.blit(temp, temp_r)
                 pass
             # print(self.map.wind_accel)
             self.draw_misc()
@@ -75,38 +94,60 @@ class Graphical_Engine:
             draw_list = list()
             mxw = self.wind_scale
             mxh = self.margin // 2
-            temp = self.information_font.render(f'wind force :{round(abs(self.map.wind_accel), 1)}', True,
-                                                pygame.Color('blue'))
+            temp = self.information_font.render(f'wind force:{round(abs(self.map.wind_accel), 1)}', True,
+                                                self.information_color)
             temp_r = temp.get_rect()
             mxw = max(mxw, temp_r.width)
-            mxh = max(mxh, temp_r.height)
+            mxh += temp_r.height + self.text_margin
             draw_list.append((temp, temp_r))
-            temp = self.information_font.render(f'distance traveled :{round(self.map.player.distance / 100, 1)}', True,
-                                                pygame.Color('blue'))
+            temp = self.information_font.render(f'height:{int(self.player.y)}', True,
+                                                self.information_color)
             temp_r = temp.get_rect()
             mxw = max(mxw, temp_r.width)
-            mxh = max(mxh, temp_r.height)
+            mxh += temp_r.height + self.text_margin
+            draw_list.append((temp, temp_r))
+            temp = self.information_font.render(f'distance traveled:{round(self.map.player.distance / 100, 1)}', True,
+                                                self.information_color)
+            temp_r = temp.get_rect()
+            mxw = max(mxw, temp_r.width)
+            mxh += temp_r.height + self.text_margin
+            draw_list.append((temp, temp_r))
+            temp = self.information_font.render(f'money:{self.map.player.money}', True,
+                                                self.information_color)
+            temp_r = temp.get_rect()
+            mxw = max(mxw, temp_r.width)
+            mxh += temp_r.height + self.text_margin
+            draw_list.append((temp, temp_r))
+            temp = self.information_font.render(f'1 bonuses:{self.map.player.num_I}', True,
+                                                self.information_color)
+            temp_r = temp.get_rect()
+            mxw = max(mxw, temp_r.width)
+            mxh += temp_r.height + self.text_margin
+            draw_list.append((temp, temp_r))
+            temp = self.information_font.render(f'2 bonuses:{self.map.player.num_II}', True,
+                                                self.information_color)
+            temp_r = temp.get_rect()
+            mxw = max(mxw, temp_r.width)
+            mxh += temp_r.height + self.text_margin
             draw_list.append((temp, temp_r))
 
             pygame.draw.rect(self.screen, pygame.Color('#fccb76'), ((self.margin // 2, self.margin // 2), (
                 mxw + self.margin + len(draw_list) * self.text_margin,
-                mxh + self.margin + len(draw_list) * self.text_margin)),
-                             0)
+                mxh + self.text_margin)), 0)
             pygame.draw.rect(self.screen, pygame.Color('#875704'),
                              ((self.margin // 2, self.margin // 2),
                               (mxw + self.margin + len(draw_list) * self.text_margin,
-                               mxh + self.margin + len(
-                                   draw_list) * self.text_margin)), 3)
+                               mxh + self.text_margin)), 3)
 
-            pygame.draw.line(self.screen, pygame.Color('blue'),
+            pygame.draw.line(self.screen, pygame.Color('purple'),
                              (self.margin, self.margin),
                              (self.margin + self.wind_scale, self.margin), 5)
-            pygame.draw.line(self.screen, pygame.Color('purple'),
+            pygame.draw.line(self.screen, pygame.Color('red'),
                              (self.margin + self.wind_scale // 2, 3 * self.margin // 4), (
                                  self.margin + self.wind_scale // 2 + int(
                                      self.wind_scale // 2 * self.map.wind_accel / (self.map.max_wind / 2)),
                                  3 * self.margin // 4),
-                             5)
+                             7)
             prev_y = self.margin
             for i in draw_list:
                 t = i[1]

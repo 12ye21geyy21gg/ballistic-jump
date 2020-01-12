@@ -43,6 +43,7 @@ class Main:
 if __name__ == '__main__':
 
     pygame.init()
+    pygame.display.set_caption('Ballistic Jumper')
     size = width, height = 1200, 700
     screen = pygame.display.set_mode(size)
     main = Main(width, height, screen)
