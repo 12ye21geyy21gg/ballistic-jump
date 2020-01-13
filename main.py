@@ -33,7 +33,7 @@ class Main:
 
     def update(self):
         if self.mode == 1:
-            pass
+            self.graph_engine.draw()
         elif self.mode == 2:
             if main.game.right:
                 self.pass_to_game_right()
@@ -72,7 +72,9 @@ if __name__ == '__main__':
                                         main.game.prepare()
                                     main.graph_engine.paused = False
                                 elif choice == 2:
-                                    pass
+                                    main.mode = 1
+                                    main.graph_engine.mode = 1
+                                    main.graph_engine.paused = False
                                 elif choice == 3:
                                     # delete save
                                     if os.path.isfile('data/save.dat'):
@@ -83,6 +85,21 @@ if __name__ == '__main__':
                                     main.graph_engine.paused = False
                                 elif choice == 4:
                                     running = False
+                    elif main.mode == 1:
+                        if not main.graph_engine.paused:
+                            # print(main.graph_engine.get_button(event.pos[0],event.pos[1]))
+                            pass
+                        else:
+                            choice = main.graph_engine.menu.pass_coords(event.pos[0], event.pos[1])
+                            if choice == 1:
+                                main.graph_engine.paused = False
+                            elif choice == 2:
+                                main.mode = 2
+                                main.graph_engine.mode = 2
+                                main.game.clock.tick()
+                                main.graph_engine.paused = False  # back to game # add saving while in
+                            elif choice == 4:
+                                running = False
                 elif event.button == 3:  # right
                     if main.mode == 2:
                         main.game.right = True
@@ -131,6 +148,11 @@ if __name__ == '__main__':
                 if event.key == pygame.K_ESCAPE:
                     if main.mode == 2:
                         main.game.pause()
+                    elif main.mode == 1:
+                        if main.graph_engine.paused:
+                            main.graph_engine.paused = False
+                        else:
+                            main.graph_engine.paused = True
                 if event.key == pygame.K_SPACE:
                     if main.mode == 2:
                         main.game.use_first()

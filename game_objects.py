@@ -64,6 +64,7 @@ class Object(pygame.sprite.Sprite):
 class Player(Object):
     def __init__(self, x, y, group):
         super().__init__(x, y, 20, 30, group)
+        self.group = group
         self.prev_dist = 0
         self.v0 = 70.0
         self.precision = 200
@@ -77,13 +78,24 @@ class Player(Object):
         self.money = 0
         self.num_I = 0
         self.num_II = 0
+        self.starter_I = 1
+        self.starter_II = 2
+        self.update_bonuses()
+
+    def update_bonuses(self):
+        self.num_I = self.starter_I
+        self.num_II = self.starter_II
+        for i in range(self.starter_I):
+            self.bonuses.append(Bonus(0, 0, 1, self.group))
+        for i in range(self.starter_II):
+            self.bonuses.append(Bonus(0, 0, 2, self.group))
     def calc_wind_accel(self, wind_a):
         return (1 - self.wind_protection) * wind_a
 
     def update_money(self):
         if int((self.distance - self.prev_dist) // 10000) > 0:
             self.money += int((self.distance - self.prev_dist) // 10000)
-        self.prev_dist = self.distance
+            self.prev_dist = self.distance
 
 
 class Platform(Object):

@@ -56,6 +56,7 @@ class Map:
         self.player.x = 10
         self.player.y = 50
         self.player.distance = 0
+        self.player.update_bonuses()
         self.platforms.append(game_objects.Platform(10, 20, 20, 30, self.group))
 
 
