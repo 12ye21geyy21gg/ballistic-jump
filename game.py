@@ -114,6 +114,10 @@ class Game:
         for i in bonuses:
             if i.rel_pos(self.map.player) == 5:
                 self.map.player.bonuses.append(i)
+                if i.type == 1:
+                    self.map.player.num_I += 1
+                elif i.type == 2:
+                    self.map.player.num_II += 1
                 self.map.bonuses.remove(i)
 
         if self.map.player.y + self.map.player.height < 0:
@@ -208,6 +212,7 @@ class Game:
                 self.map.platforms.append(
                     game_objects.Platform(self.map.player.x, self.map.player.y - 30, 20, 30, self.sprites))
                 self.map.player.bonuses.remove(i)
+                self.map.player.num_I -= 1
                 break
 
     def use_second(self):
@@ -215,4 +220,5 @@ class Game:
             if i.type == 2 and not self.graph_engine.paused and not self.map.player.isFlying and self.map.player.boost == 1:
                 self.map.player.boost = self.map_gen.boost
                 self.map.player.bonuses.remove(i)
+                self.map.player.num_II -= 1
                 break
