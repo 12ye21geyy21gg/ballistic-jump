@@ -9,7 +9,7 @@ class Map:
         self.player = game_objects.Player(10, 50, group)
         self.platforms.append(game_objects.Platform(10, 20, 20, 30, self.group))
         self.wind_accel = 0
-        self.max_wind = 3
+        self.max_wind = 6
         self.gravity_accel = -10
         self.view_width = vw
         self.view_height = vh
@@ -56,6 +56,7 @@ class Map:
         self.player.x = 10
         self.player.y = 50
         self.player.distance = 0
+        self.player.update_bonuses()
         self.platforms.append(game_objects.Platform(10, 20, 20, 30, self.group))
 
 

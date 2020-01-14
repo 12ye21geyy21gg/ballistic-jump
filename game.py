@@ -204,6 +204,8 @@ class Game:
                 self.graph_engine.paused = True
 
     def use_first(self):
+        self.map.change_wind()
+        print(self.map.wind_accel)
         for i in self.map.player.bonuses:
             if i.type == 1 and not self.graph_engine.paused and self.map.player.isFlying:
                 self.map.player.isFlying = False
