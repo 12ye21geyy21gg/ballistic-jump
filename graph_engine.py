@@ -89,7 +89,8 @@ class Graphical_Engine:
                 self.screen.blit(temp, temp_r)
                 pass
             # print(self.map.wind_accel)
-            self.draw_misc()
+            if not self.paused:
+                self.draw_misc()
         if self.paused:
             self.draw_pause()
 

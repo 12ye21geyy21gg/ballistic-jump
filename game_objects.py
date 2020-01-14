@@ -66,7 +66,7 @@ class Player(Object):
         super().__init__(x, y, 20, 30, group)
         self.group = group
         self.prev_dist = 0
-        self.v0 = 70.0
+        self.v0 = 80.0
         self.precision = 200
         self.wind_protection = 0.0
         self.distance = 0
