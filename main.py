@@ -98,6 +98,8 @@ if __name__ == '__main__':
                                 main.graph_engine.mode = 2
                                 main.game.clock.tick()
                                 main.graph_engine.paused = False  # back to game # add saving while in
+                                if main.game.end:
+                                    main.graph_engine.paused = True
                             elif choice == 4:
                                 running = False
                 elif event.button == 3:  # right
