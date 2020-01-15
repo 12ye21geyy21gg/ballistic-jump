@@ -23,6 +23,8 @@ class Game:
         self.view_width = vw
         self.view_height = vh
         self.clock = pygame.time.Clock()
+        self.portal_clock = pygame.time.Clock()
+        self.portal_duration = 2000
         self.end = False
         self.lx = 0
         self.ly = 0
@@ -34,6 +36,7 @@ class Game:
         self.debug = True
         self.map.set_sprites()
         self.isUpdated = True
+        self.counter = 0
 
     def load_map(self):
         t = self.saver.load()
@@ -70,6 +73,8 @@ class Game:
         self.map_gen = map_gen.Map_Gen(self.sprites)
         self.camera = game_objects.Camera(-30, 0, self.view_width, self.view_height, self.map.player)
         self.map_gen.generate(self.map.platforms, self.map.bonuses, 50)
+        self.portal_duration = 2000
+        self.portal_clock = pygame.time.Clock()
     def move_player(self):
         if self.map.player.isFlying:
             dt = self.clock.tick() / 1000 * self.time_scale
@@ -112,12 +117,14 @@ class Game:
 
 
         for i in bonuses:
-            if i.rel_pos(self.map.player) == 5:
+            if i.rel_pos(self.map.player) == 5 and type(i) is not game_objects.Portal:
                 self.map.player.bonuses.append(i)
                 if i.type == 1:
                     self.map.player.num_I += 1
                 elif i.type == 2:
                     self.map.player.num_II += 1
+                elif i.type == 3:
+                    self.map.player.num_III += 1
                 self.map.bonuses.remove(i)
 
         if self.map.player.y + self.map.player.height < 0:
@@ -139,7 +146,7 @@ class Game:
             temp, temp2 = self.map.get_nearest_objects(self.camera.x)
             temp.extend(temp2)
             temp.append(self.map.player)
-
+            self.check_portals()
             self.graph_engine.set_objects(temp)
             self.camera_update()
             self.graph_engine.draw()
@@ -177,6 +184,7 @@ class Game:
         self.map.player.vy = v0 * math.sin(a)  # * math.copysign(1,y)
         self.clock.tick()
 
+
     def pass_left(self, x, y):
         if not self.graph_engine.paused:
             self.lx = x
@@ -200,12 +208,20 @@ class Game:
             if self.graph_engine.paused:
                 self.graph_engine.paused = False
                 self.clock.tick()
+                self.portal_clock.tick()
             else:
                 self.graph_engine.paused = True
 
+    def check_portals(self):
+        dt = self.portal_clock.tick()
+        for i in self.map.bonuses:
+            if type(i) == game_objects.Portal:
+                if not i.check(dt):
+                    self.map.bonuses.remove(i)
+
+
+
     def use_first(self):
-        self.map.change_wind()
-        print(self.map.wind_accel)
         for i in self.map.player.bonuses:
             if i.type == 1 and not self.graph_engine.paused and self.map.player.isFlying:
                 self.map.player.isFlying = False
@@ -215,6 +231,8 @@ class Game:
                     game_objects.Platform(self.map.player.x, self.map.player.y - 30, 20, 30, self.sprites))
                 self.map.player.bonuses.remove(i)
                 self.map.player.num_I -= 1
+                if self.map.player.num_I < 0:
+                    self.map.player.num_I = 0
                 break
 
     def use_second(self):
@@ -223,4 +241,20 @@ class Game:
                 self.map.player.boost = self.map_gen.boost
                 self.map.player.bonuses.remove(i)
                 self.map.player.num_II -= 1
+                if self.map.player.num_II < 0:
+                    self.map.player.num_II = 0
+                break
+
+    def use_third(self):
+        for i in self.map.player.bonuses:
+            if i.type == 3 and not self.graph_engine.paused and self.map.player.isFlying:
+                self.map.player.bonuses.remove(i)
+                self.map.player.num_III -= 1
+                self.map.bonuses.append(
+                    game_objects.Portal(self.map.player.x, self.map.player.y, 1, self.portal_duration, self.sprites))
+                self.map.player.y += self.view_height // 2
+                self.map.bonuses.append(
+                    game_objects.Portal(self.map.player.x, self.map.player.y, 2, self.portal_duration, self.sprites))
+                if self.map.player.num_III < 0:
+                    self.map.player.num_III = 0
                 break

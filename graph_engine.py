@@ -47,6 +47,8 @@ class Graphical_Engine:
             self.color = pygame.Color('red')
         elif type(obj) is game_objects.Bonus:
             self.color = pygame.Color('yellow')
+        elif type(obj) is game_objects.Portal:
+            self.color = pygame.Color('purple')
         else:
             self.color = pygame.Color('white')
 
@@ -158,6 +160,12 @@ class Graphical_Engine:
         mxh += temp_r.height + self.text_margin
         draw_list.append((temp, temp_r))
         temp = self.information_font.render(f'2 bonuses:{self.map.player.num_II}', True,
+                                            self.information_color)
+        temp_r = temp.get_rect()
+        mxw = max(mxw, temp_r.width)
+        mxh += temp_r.height + self.text_margin
+        draw_list.append((temp, temp_r))
+        temp = self.information_font.render(f'3 bonuses:{self.map.player.num_III}', True,
                                             self.information_color)
         temp_r = temp.get_rect()
         mxw = max(mxw, temp_r.width)
