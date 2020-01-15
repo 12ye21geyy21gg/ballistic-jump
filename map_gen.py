@@ -68,7 +68,7 @@ class Map_Gen:
         self.margin_width = 50
         self.platform_width = 100
         self.platform_height = 50
-        self.max_bonuses = 2
+        self.max_bonuses = 3
         self.prev_x = 0
         self.dx = 0
         self.bonus_chance = 0.1

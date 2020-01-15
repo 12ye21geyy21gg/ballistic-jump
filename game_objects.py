@@ -78,17 +78,22 @@ class Player(Object):
         self.money = 0
         self.num_I = 0
         self.num_II = 0
+        self.num_III = 0
         self.starter_I = 1
         self.starter_II = 2
+        self.starter_III = 1
         self.update_bonuses()
 
     def update_bonuses(self):
         self.num_I = self.starter_I
         self.num_II = self.starter_II
+        self.num_III = self.starter_III
         for i in range(self.starter_I):
             self.bonuses.append(Bonus(0, 0, 1, self.group))
         for i in range(self.starter_II):
             self.bonuses.append(Bonus(0, 0, 2, self.group))
+        for i in range(self.starter_III):
+            self.bonuses.append(Bonus(0, 0, 3, self.group))
     def calc_wind_accel(self, wind_a):
         return (1 - self.wind_protection) * wind_a
 
@@ -111,6 +116,21 @@ class Bonus(Object):
 
     def get_image_by_type(self):
         pass
+
+
+class Portal(Object):
+    def __init__(self, x, y, type, dur, group):
+        super().__init__(x, y, 100, 50, group)
+        self.type = type
+        self.dur = dur  # ms
+
+    def check(self, dt):  # ms
+        self.dur -= dt
+        if self.dur < 0:
+            return False
+        return True
+
+
 
 
 class Camera:

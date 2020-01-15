@@ -85,6 +85,8 @@ if __name__ == '__main__':
                                     main.graph_engine.paused = False
                                 elif choice == 4:
                                     running = False
+                                main.game.clock.tick()
+                                main.game.portal_clock.tick()
                     elif main.mode == 1:
                         if not main.graph_engine.paused:
                             # print(main.graph_engine.get_button(event.pos[0],event.pos[1]))
@@ -97,6 +99,7 @@ if __name__ == '__main__':
                                 main.mode = 2
                                 main.graph_engine.mode = 2
                                 main.game.clock.tick()
+                                main.game.portal_clock.tick()
                                 main.graph_engine.paused = False  # back to game # add saving while in
                                 if main.game.end:
                                     main.graph_engine.paused = True
@@ -161,6 +164,9 @@ if __name__ == '__main__':
                 if event.key == pygame.K_LSHIFT:
                     if main.mode == 2:
                         main.game.use_second()
+                if event.key == pygame.K_LCTRL:
+                    if main.mode == 2:
+                        main.game.use_third()
         main.update()
         pygame.display.flip()
 
