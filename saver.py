@@ -4,7 +4,6 @@ import os, pickle
 class Saver:
     def __init__(self):
         self.out = 'data/save.dat'
-        pass
 
     def save(self, data):  # data = [map,statistics]
         f = open(self.out, mode='wb+')

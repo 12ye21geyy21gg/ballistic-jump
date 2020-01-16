@@ -89,7 +89,8 @@ if __name__ == '__main__':
                                 main.game.portal_clock.tick()
                     elif main.mode == 1:
                         if not main.graph_engine.paused:
-                            # print(main.graph_engine.get_button(event.pos[0],event.pos[1]))
+                            num = main.graph_engine.get_button(event.pos[0], event.pos[1])
+                            main.game.store.buy(num, main.game.map.player, game)
                             pass
                         else:
                             choice = main.graph_engine.menu.pass_coords(event.pos[0], event.pos[1])

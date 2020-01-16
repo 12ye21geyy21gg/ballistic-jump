@@ -56,6 +56,7 @@ class Map:
         self.player.x = 10
         self.player.y = 50
         self.player.distance = 0
+        self.player.prev_dist = 0
         self.player.update_bonuses()
         self.platforms.append(game_objects.Platform(10, 20, 20, 30, self.group))
 
@@ -72,7 +73,7 @@ class Map_Gen:
         self.prev_x = 0
         self.dx = 0
         self.bonus_chance = 0.1
-        self.boost = 5
+        self.boost = 2
         self.group = group
 
     def generate(self, platforms, bonuses, N):
