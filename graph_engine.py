@@ -30,8 +30,8 @@ class Graphical_Engine:
         self.store_font = pygame.font.Font('data/FreeSans.ttf', 20)
         self.store_font.set_bold(True)
 
-    def prepare(self, camera, map):
-
+    def prepare(self, camera, map, store):
+        self.store = store
         self.camera = camera
         self.map = map
         self.player = self.map.player
@@ -107,8 +107,24 @@ class Graphical_Engine:
                                                                                  self.button_height + self.margin // 2)),
                                                                     (self.button_width, self.button_height)), 5)
 
-            if i == 0:
-                pass
+            if i < self.num_rows * self.num_cols - 1:
+                temp = self.store_font.render(f'{self.store.slots[i][0]}', True,
+                                              self.information_color)
+                temp_r = temp.get_rect()
+                temp_r.y = self.margin + (i % self.num_rows) * (
+                        self.button_height + self.margin // 2) + self.button_height // 2 - temp_r.height // 2 - temp_r.height
+                temp_r.x = self.margin + self.margin + (i // self.num_rows) * (
+                        self.button_width + self.margin // 2) + self.button_width // 2 - temp_r.width // 2
+                self.screen.blit(temp, temp_r)
+                temp = self.store_font.render(f'price: {self.store.slots[i][2]}, level: {self.store.slots[i][1]}', True,
+                                              self.information_color)
+                temp_r = temp.get_rect()
+                temp_r.y = self.margin + (i % self.num_rows) * (
+                        self.button_height + self.margin // 2) + self.button_height // 2 - temp_r.height // 2 + temp_r.height
+                temp_r.x = self.margin + self.margin + (i // self.num_rows) * (
+                        self.button_width + self.margin // 2) + self.button_width // 2 - temp_r.width // 2
+                self.screen.blit(temp, temp_r)
+
             elif i == self.num_rows * self.num_cols - 1:
                 temp = self.store_font.render(f'your money:{self.map.player.money}', True,
                                               self.information_color)
@@ -166,6 +182,24 @@ class Graphical_Engine:
         mxh += temp_r.height + self.text_margin
         draw_list.append((temp, temp_r))
         temp = self.information_font.render(f'3 bonuses:{self.map.player.num_III}', True,
+                                            self.information_color)
+        temp_r = temp.get_rect()
+        mxw = max(mxw, temp_r.width)
+        mxh += temp_r.height + self.text_margin
+        draw_list.append((temp, temp_r))
+        temp = self.information_font.render(f'power of boost:{self.store.boost}', True,
+                                            self.information_color)
+        temp_r = temp.get_rect()
+        mxw = max(mxw, temp_r.width)
+        mxh += temp_r.height + self.text_margin
+        draw_list.append((temp, temp_r))
+        temp = self.information_font.render(f'height of portal:{self.store.portal_height}', True,
+                                            self.information_color)
+        temp_r = temp.get_rect()
+        mxw = max(mxw, temp_r.width)
+        mxh += temp_r.height + self.text_margin
+        draw_list.append((temp, temp_r))
+        temp = self.information_font.render(f'wind protection:{int(self.player.wind_protection * 100)}%', True,
                                             self.information_color)
         temp_r = temp.get_rect()
         mxw = max(mxw, temp_r.width)

@@ -79,9 +79,9 @@ class Player(Object):
         self.num_I = 0
         self.num_II = 0
         self.num_III = 0
-        self.starter_I = 1
-        self.starter_II = 2
-        self.starter_III = 1
+        self.starter_I = 0
+        self.starter_II = 0
+        self.starter_III = 0
         self.update_bonuses()
 
     def update_bonuses(self):
@@ -98,8 +98,8 @@ class Player(Object):
         return (1 - self.wind_protection) * wind_a
 
     def update_money(self):
-        if int((self.distance - self.prev_dist) // 10000) > 0:
-            self.money += int((self.distance - self.prev_dist) // 10000)
+        if int((self.distance - self.prev_dist) // 5000) > 0:
+            self.money += int((self.distance - self.prev_dist) // 5000)
             self.prev_dist = self.distance
 
 

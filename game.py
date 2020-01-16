@@ -1,4 +1,4 @@
-import game_objects, map_gen, graph_engine, pygame, math, random
+import game_objects, map_gen, graph_engine, pygame, math, random, store_menu
 
 KOEF = 1
 
@@ -37,6 +37,10 @@ class Game:
         self.map.set_sprites()
         self.isUpdated = True
         self.counter = 0
+        self.store = self.load_store()
+        if self.store is None:
+            self.store = store_menu.Store(self.graph_engine.num_cols * self.graph_engine.num_rows)
+        self.store.portal_height = self.view_height // 2
 
     def load_map(self):
         t = self.saver.load()
@@ -47,13 +51,20 @@ class Game:
         t = self.saver.load()
         if t is not None:
             return t[1]
+
+    def load_store(self):
+        t = self.saver.load()
+        if t is not None:
+            return t[2]
     def prepare(self):
-        self.graph_engine.prepare(self.camera, self.map)
+        self.graph_engine.prepare(self.camera, self.map, self.store)
         temp, temp2 = self.map.get_nearest_objects(self.camera.x)
         temp.extend(temp2)
         temp.append(self.map.player)
         self.graph_engine.set_objects(temp)
         self.map.change_wind()
+        self.store.prepare()
+
 
     def restart(self):
         self.clock = pygame.time.Clock()
@@ -75,6 +86,9 @@ class Game:
         self.map_gen.generate(self.map.platforms, self.map.bonuses, 50)
         self.portal_duration = 2000
         self.portal_clock = pygame.time.Clock()
+        self.store = store_menu.Store(self.graph_engine.num_cols * self.graph_engine.num_rows)
+        self.store.portal_height = self.view_height // 2
+
     def move_player(self):
         if self.map.player.isFlying:
             dt = self.clock.tick() / 1000 * self.time_scale
@@ -152,7 +166,7 @@ class Game:
             self.graph_engine.draw()
             if not self.isUpdated and not self.map.player.isFlying and not self.end:
                 self.map.player.update_money()
-                self.saver.save([self.map, self.map_gen])
+                self.saver.save([self.map, self.map_gen, self.store])
                 self.isUpdated = True
             pass
         else:
@@ -238,7 +252,7 @@ class Game:
     def use_second(self):
         for i in self.map.player.bonuses:
             if i.type == 2 and not self.graph_engine.paused and not self.map.player.isFlying and self.map.player.boost == 1:
-                self.map.player.boost = self.map_gen.boost
+                self.map.player.boost = self.store.boost
                 self.map.player.bonuses.remove(i)
                 self.map.player.num_II -= 1
                 if self.map.player.num_II < 0:
@@ -252,7 +266,7 @@ class Game:
                 self.map.player.num_III -= 1
                 self.map.bonuses.append(
                     game_objects.Portal(self.map.player.x, self.map.player.y, 1, self.portal_duration, self.sprites))
-                self.map.player.y += self.view_height // 2
+                self.map.player.y += self.store.portal_height
                 self.map.bonuses.append(
                     game_objects.Portal(self.map.player.x, self.map.player.y, 2, self.portal_duration, self.sprites))
                 if self.map.player.num_III < 0:
