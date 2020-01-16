@@ -5,7 +5,7 @@ class Saver:
     def __init__(self):
         self.out = 'data/save.dat'
 
-    def save(self, data):  # data = [map,statistics]
+    def save(self, data):
         f = open(self.out, mode='wb+')
         pickle.dump(data, f)
         f.close()
@@ -17,5 +17,6 @@ class Saver:
             t = pickle.load(f)
             f.close()
             return t
+            pass
         else:
             return None

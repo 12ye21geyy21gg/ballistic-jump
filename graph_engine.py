@@ -58,6 +58,7 @@ class Graphical_Engine:
 
     def draw(self):
         self.clear_screen()
+
         if self.mode == 1:
             self.draw_store()
         elif self.mode == 2:
@@ -233,7 +234,7 @@ class Graphical_Engine:
 
 
     def draw_background(self):
-        pass
+        self.screen.blit(self.map.background.image, self.map.background.image.get_rect())
 
     def draw_object(self, obj):
         if obj.image is None:
@@ -241,7 +242,8 @@ class Graphical_Engine:
             pygame.draw.rect(self.screen, self.color, (self.get_rel_coords(obj), (obj.width, obj.height)), 0)
         else:
             obj.connect_coords(self.view_height)
-            pass
+
+            self.screen.blit(obj.image, self.get_rel_coords(obj))
 
     def get_rel_coords(self, obj):
         return int(obj.x - self.camera.x), int(self.view_height - (obj.height + obj.y - self.camera.y))

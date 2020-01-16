@@ -1,4 +1,4 @@
-import random, game_objects
+import random, game_objects, pygame
 
 
 class Map:
@@ -7,6 +7,7 @@ class Map:
         self.bonuses = list()  # [x,y,type]
         self.group = group
         self.player = game_objects.Player(10, 50, group)
+        self.player.set_image('doodle.bmp', -1)
         self.platforms.append(game_objects.Platform(10, 20, 20, 30, self.group))
         self.wind_accel = 0
         self.max_wind = 6
@@ -44,9 +45,19 @@ class Map:
 
     def set_sprites(self):
         for i in self.platforms:
-            pass
+            if i.width <= 50:
+                i.set_image('small.bmp', -1)
+
+            else:
+                i.set_image('big.bmp', -1)
+
+            i.image = pygame.transform.scale(i.image, (i.width, i.height))
+            i.rect = i.image.get_rect()
         for i in self.bonuses:
-            pass
+            if type(i) is game_objects.Portal:
+                i.set()
+            else:
+                i.get_image_by_type()
         pass
 
     def reset(self):
