@@ -11,13 +11,10 @@ class Game:
     def __init__(self, vw, vh, screen, graph_engine, saver):
         self.sprites = pygame.sprite.Group()
         self.saver = saver
-        self.map_gen = self.load_map_gen()
-        if self.map_gen is None:
-            self.map_gen = map_gen.Map_Gen(self.sprites)
-        self.map = self.load_map()
-        if self.map is None:
-            self.map = map_gen.Map(vw, vh, self.sprites)
-            self.map_gen.generate(self.map.platforms, self.map.bonuses, 50)
+        self.map_gen = map_gen.Map_Gen(self.sprites)
+
+        self.map = map_gen.Map(vw, vh, self.sprites)
+        self.map_gen.generate(self.map.platforms, self.map.bonuses, 50)
         self.camera = game_objects.Camera(-30, 0, vw, vh, self.map.player)  # ssss
         self.graph_engine = graph_engine  # graph_engine.Graphical_Engine(vw,vh,screen,self.camera,self.map.player,self.map.background)
         self.view_width = vw
@@ -38,24 +35,26 @@ class Game:
         self.isUpdated = True
         self.counter = 0
         self.store = self.load_store()
+        self.load_player()
         if self.store is None:
             self.store = store_menu.Store(self.graph_engine.num_cols * self.graph_engine.num_rows)
-        self.store.portal_height = self.view_height // 2
+            self.store.portal_height = self.view_height // 2
+            self.store.prepare()
 
-    def load_map(self):
+    def load_player(self):
         t = self.saver.load()
         if t is not None:
-            return t[0]
-
-    def load_map_gen(self):
-        t = self.saver.load()
-        if t is not None:
-            return t[1]
+            self.map.player.v0 = t[0]
+            self.map.player.starter_I = t[1]
+            self.map.player.starter_II = t[2]
+            self.map.player.starter_III = t[3]
+            self.map.player.wind_protection = t[4]
+            self.map.player.money = t[5]
 
     def load_store(self):
         t = self.saver.load()
         if t is not None:
-            return t[2]
+            return t[-1]
     def prepare(self):
         self.graph_engine.prepare(self.camera, self.map, self.store)
         temp, temp2 = self.map.get_nearest_objects(self.camera.x)
@@ -63,7 +62,8 @@ class Game:
         temp.append(self.map.player)
         self.graph_engine.set_objects(temp)
         self.map.change_wind()
-        self.store.prepare()
+        self.prep_imgs()
+
 
 
     def restart(self):
@@ -86,8 +86,7 @@ class Game:
         self.map_gen.generate(self.map.platforms, self.map.bonuses, 50)
         self.portal_duration = 2000
         self.portal_clock = pygame.time.Clock()
-        self.store = store_menu.Store(self.graph_engine.num_cols * self.graph_engine.num_rows)
-        self.store.portal_height = self.view_height // 2
+        self.prep_imgs()
 
     def move_player(self):
         if self.map.player.isFlying:
@@ -132,7 +131,6 @@ class Game:
 
         for i in bonuses:
             if i.rel_pos(self.map.player) == 5 and type(i) is not game_objects.Portal:
-                self.map.player.bonuses.append(i)
                 if i.type == 1:
                     self.map.player.num_I += 1
                 elif i.type == 2:
@@ -166,8 +164,8 @@ class Game:
             self.graph_engine.draw()
             if not self.isUpdated and not self.map.player.isFlying and not self.end:
                 self.map.player.update_money()
-                self.clear_imgs()
-                self.saver.save([self.map, self.map_gen, self.store])
+
+                self.saver.save(self.save())
                 self.isUpdated = True
             pass
         else:
@@ -179,6 +177,10 @@ class Game:
         self.rx = 0
         self.ry = 0
         self.camera.update()
+
+    def save(self):
+        return [self.map.player.v0, self.map.player.starter_I, self.map.player.starter_II, self.map.player.starter_III,
+                self.map.player.wind_protection, self.map.player.money, self.store]
 
     def start_jump(self, x, y):  # rel to center
         self.isUpdated = False
@@ -236,56 +238,52 @@ class Game:
 
     def clear_imgs(self):
         self.map.player.image = None
+        self.map.player.rect = None
         for i in self.map.platforms:
             i.image = None
+            i.rect = None
         for i in self.map.bonuses:
             i.image = None
+            i.rect = None
         self.map.background.image = None
-        print(self.map.player.image, self.map.background.image)
-        for i in self.map.platforms:
-            print(i.image)
-        for i in self.map.bonuses:
-            print(i.image)
+        self.map.group = None
+        self.map_gen.group = None
 
     def prep_imgs(self):
+        self.map.group = self.sprites
+        self.map_gen.group = self.sprites
         self.map.player.set_image('doodle.bmp', -1)
         self.map.set_sprites()
         self.map.background.set()
 
     def use_first(self):
-        for i in self.map.player.bonuses:
-            if i.type == 1 and not self.graph_engine.paused and self.map.player.isFlying:
-                self.map.player.isFlying = False
-                self.map.player.vx = 0
-                self.map.player.vy = 0
-                self.map.platforms.append(
-                    game_objects.Platform(self.map.player.x, self.map.player.y - 30, 20, 30, self.sprites))
-                self.map.player.bonuses.remove(i)
-                self.map.player.num_I -= 1
-                if self.map.player.num_I < 0:
-                    self.map.player.num_I = 0
-                break
+        if not self.graph_engine.paused and self.map.player.isFlying and self.map.player.num_I > 0:
+            self.map.player.isFlying = False
+            self.map.player.vx = 0
+            self.map.player.vy = 0
+            self.map.platforms.append(
+                game_objects.Platform(self.map.player.x, self.map.player.y - 30, 20, 30, self.sprites))
+            self.map.set_sprites()
+
+            self.map.player.num_I -= 1
+            if self.map.player.num_I < 0:
+                self.map.player.num_I = 0
 
     def use_second(self):
-        for i in self.map.player.bonuses:
-            if i.type == 2 and not self.graph_engine.paused and not self.map.player.isFlying and self.map.player.boost == 1:
-                self.map.player.boost = self.store.boost
-                self.map.player.bonuses.remove(i)
-                self.map.player.num_II -= 1
-                if self.map.player.num_II < 0:
-                    self.map.player.num_II = 0
-                break
+        if not self.graph_engine.paused and not self.map.player.isFlying and self.map.player.boost == 1 and self.map.player.num_II > 0:
+            self.map.player.boost = self.store.boost
+            self.map.player.num_II -= 1
+            if self.map.player.num_II < 0:
+                self.map.player.num_II = 0
 
     def use_third(self):
-        for i in self.map.player.bonuses:
-            if i.type == 3 and not self.graph_engine.paused and self.map.player.isFlying:
-                self.map.player.bonuses.remove(i)
-                self.map.player.num_III -= 1
-                self.map.bonuses.append(
-                    game_objects.Portal(self.map.player.x, self.map.player.y, 1, self.portal_duration, self.sprites))
-                self.map.player.y += self.store.portal_height
-                self.map.bonuses.append(
-                    game_objects.Portal(self.map.player.x, self.map.player.y, 2, self.portal_duration, self.sprites))
-                if self.map.player.num_III < 0:
-                    self.map.player.num_III = 0
-                break
+        if not self.graph_engine.paused and self.map.player.isFlying and self.map.player.num_III > 0:
+
+            self.map.player.num_III -= 1
+            self.map.bonuses.append(
+                game_objects.Portal(self.map.player.x, self.map.player.y, 1, self.portal_duration, self.sprites))
+            self.map.player.y += self.store.portal_height
+            self.map.bonuses.append(
+                game_objects.Portal(self.map.player.x, self.map.player.y, 2, self.portal_duration, self.sprites))
+            if self.map.player.num_III < 0:
+                self.map.player.num_III = 0

@@ -73,14 +73,13 @@ class Player(Object):
         self.isFlying = False
         self.vx = 0.0
         self.vy = 0.0
-        self.bonuses = list()
         self.boost = 1
-        self.money = 0
+        self.money = 10
         self.num_I = 0
         self.num_II = 0
         self.num_III = 0
-        self.starter_I = 0
-        self.starter_II = 0
+        self.starter_I = 1
+        self.starter_II = 1
         self.starter_III = 2
         self.update_bonuses()
 
@@ -88,12 +87,6 @@ class Player(Object):
         self.num_I = self.starter_I
         self.num_II = self.starter_II
         self.num_III = self.starter_III
-        for i in range(self.starter_I):
-            self.bonuses.append(Bonus(0, 0, 1, self.group))
-        for i in range(self.starter_II):
-            self.bonuses.append(Bonus(0, 0, 2, self.group))
-        for i in range(self.starter_III):
-            self.bonuses.append(Bonus(0, 0, 3, self.group))
     def calc_wind_accel(self, wind_a):
         return (1 - self.wind_protection) * wind_a
 
