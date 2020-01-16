@@ -56,10 +56,9 @@ class Game:
         if t is not None:
             return t[-1]
     def prepare(self):
-        self.graph_engine.prepare(self.camera, self.map, self.store)
+        self.graph_engine.prepare(self.camera, self.map, self.store, self.sprites)
         temp, temp2 = self.map.get_nearest_objects(self.camera.x)
         temp.extend(temp2)
-        temp.append(self.map.player)
         self.graph_engine.set_objects(temp)
         self.map.change_wind()
         self.prep_imgs()
@@ -157,7 +156,6 @@ class Game:
             self.map.clean(self.map.player.x)
             temp, temp2 = self.map.get_nearest_objects(self.camera.x)
             temp.extend(temp2)
-            temp.append(self.map.player)
             self.check_portals()
             self.graph_engine.set_objects(temp)
             self.camera_update()

@@ -190,3 +190,16 @@ class Background(pygame.sprite.Sprite):
 
     def set(self):
         self.image = load_image('wall.jpg')
+
+
+class Cannon(pygame.sprite.Sprite):
+    def __init__(self, group):
+        super().__init__(group)
+        self.wheel = load_image('wheel.bmp', -1)
+        self.cannon = load_image('cannon.bmp', -1)
+        self.w_rect = self.wheel.get_rect()
+        self.c_rect = self.cannon.get_rect()
+        self.w0 = self.wheel
+        self.c0 = self.cannon
+        self.w0r = self.w_rect
+        self.c0r = self.c_rect
