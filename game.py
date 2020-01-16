@@ -166,6 +166,7 @@ class Game:
             self.graph_engine.draw()
             if not self.isUpdated and not self.map.player.isFlying and not self.end:
                 self.map.player.update_money()
+                self.clear_imgs()
                 self.saver.save([self.map, self.map_gen, self.store])
                 self.isUpdated = True
             pass
@@ -233,7 +234,23 @@ class Game:
                 if not i.check(dt):
                     self.map.bonuses.remove(i)
 
+    def clear_imgs(self):
+        self.map.player.image = None
+        for i in self.map.platforms:
+            i.image = None
+        for i in self.map.bonuses:
+            i.image = None
+        self.map.background.image = None
+        print(self.map.player.image, self.map.background.image)
+        for i in self.map.platforms:
+            print(i.image)
+        for i in self.map.bonuses:
+            print(i.image)
 
+    def prep_imgs(self):
+        self.map.player.set_image('doodle.bmp', -1)
+        self.map.set_sprites()
+        self.map.background.set()
 
     def use_first(self):
         for i in self.map.player.bonuses:

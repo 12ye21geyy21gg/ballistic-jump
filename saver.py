@@ -17,5 +17,6 @@ class Saver:
             t = pickle.load(f)
             f.close()
             return t
+            pass
         else:
             return None

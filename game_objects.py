@@ -1,4 +1,4 @@
-import pygame, os
+import pygame, os, sys
 
 
 def load_image(name, colorkey=None):
@@ -30,13 +30,13 @@ class Object(pygame.sprite.Sprite):
             return False # skip
     """
 
-    def set_image(self, image):
-        self.image = load_image(image)
+    def set_image(self, image, ck):
+        self.image = load_image(image, colorkey=ck)
         self.rect = self.image.get_rect()
 
     def connect_coords(self, vh):
-        self.rect.x = self.x
-        self.rect.y = vh - self.y - self.height
+        self.rect.x = int(self.x)
+        self.rect.y = int(vh - self.y - self.height)
 
     def collide_rect(self, object):
         if self.x <= object.x + object.width:
@@ -63,7 +63,7 @@ class Object(pygame.sprite.Sprite):
 
 class Player(Object):
     def __init__(self, x, y, group):
-        super().__init__(x, y, 20, 30, group)
+        super().__init__(x, y, 40, 50, group)
         self.group = group
         self.prev_dist = 0
         self.v0 = 80.0
@@ -81,7 +81,7 @@ class Player(Object):
         self.num_III = 0
         self.starter_I = 0
         self.starter_II = 0
-        self.starter_III = 0
+        self.starter_III = 2
         self.update_bonuses()
 
     def update_bonuses(self):
@@ -115,7 +115,12 @@ class Bonus(Object):
         self.get_image_by_type()
 
     def get_image_by_type(self):
-        pass
+        if self.type == 1:
+            self.set_image('bonus.bmp', -1)
+        elif self.type == 2:
+            self.set_image('bon_boost.bmp', -1)
+        elif self.type == 3:
+            self.set_image('bon_por.bmp', -1)
 
 
 class Portal(Object):
@@ -123,12 +128,18 @@ class Portal(Object):
         super().__init__(x, y, 100, 50, group)
         self.type = type
         self.dur = dur  # ms
-
+        self.set()
     def check(self, dt):  # ms
         self.dur -= dt
         if self.dur < 0:
             return False
         return True
+
+    def set(self):
+        if self.type == 1:
+            self.image = self.set_image('blue_portal.bmp', -1)
+        elif self.type == 2:
+            self.image = self.set_image('orange_portal.bmp', -1)
 
 
 
@@ -182,4 +193,7 @@ class Cursor(pygame.sprite.Sprite):
 class Background(pygame.sprite.Sprite):
     def __init__(self, group):
         super().__init__(group)
-        self.image = None
+        self.image = load_image('wall.jpg')
+
+    def set(self):
+        self.image = load_image('wall.jpg')
