@@ -71,7 +71,7 @@ class Graphical_Engine:
                 self.draw_object(self.player)
             else:
                 if self.x - self.get_rel_coords_center(self.player)[0] > 0:
-                    self.cannon.cannon = self.cannon.c0
+                    self.cannon.cannon = pygame.transform.scale(self.cannon.c0, (150, 50))
                 else:
                     self.cannon.cannon = pygame.transform.flip(self.cannon.c0, False, True)
 
