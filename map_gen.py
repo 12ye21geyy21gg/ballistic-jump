@@ -89,7 +89,7 @@ class Map_Gen:
 
     def generate(self, platforms, bonuses, N):
         for i in range(N):
-            dx = random.randint(0, self.hor_step) + self.margin_width
+            dx = random.randint(self.platform_width, self.hor_step) + self.margin_width
             self.dx += dx
             self.prev_x += dx
             t = game_objects.Platform(self.prev_x, random.randint(0, self.ver_step) + 30,

@@ -99,6 +99,7 @@ if __name__ == '__main__':
                             elif choice == 2:
                                 main.mode = 2
                                 main.graph_engine.mode = 2
+                                main.game.saver.save(main.game.save())
                                 main.game.clock.tick()
                                 main.game.portal_clock.tick()
                                 main.graph_engine.paused = False  # back to game # add saving while in
