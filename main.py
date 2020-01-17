@@ -142,9 +142,16 @@ if __name__ == '__main__':
                 if main.mode == 2:
                     if main.game.left:
                         main.game.pass_left(event.pos[0], event.pos[1])
+
+
                     elif main.game.right:
                         main.dx = event.pos[0]
                         main.dy = height - event.pos[1]
+                if main.graph_engine.paused:
+                    main.graph_engine.active = main.game.graph_engine.menu.pass_coords(event.pos[0], event.pos[1])
+                if main.mode == 1 and not main.graph_engine.paused:
+                    main.graph_engine.active_store = main.graph_engine.get_button(event.pos[0], event.pos[1])
+
 
 
             if event.type == pygame.KEYDOWN:

@@ -14,15 +14,34 @@ class Main_Menu:
         self.button_height = (self.view_height - 2 * self.margin_vert - (
                 self.num_of_btns - 1) * self.btw_btns) // self.num_of_btns
         self.prev_y = 0
+        self.main_font = pygame.font.Font(None, 50)
+        self.main_font.set_bold(False)
+        self.active_color = (255, 255, 0)
+        self.not_active = (255, 100, 0)
 
-    def draw_button(self, pos, text=None):
-        pygame.draw.rect(self.screen, pygame.Color('grey'), (
-            (self.margin_hor, self.margin_vert + (self.button_height + self.btw_btns) * (pos - 1)),
-            (self.button_width, self.button_height)), 0)
+    def draw_button(self, pos, text=None, active=None):
+        if active is None:
+            pygame.draw.rect(self.screen, self.active_color, (
+                (self.margin_hor, self.margin_vert + (self.button_height + self.btw_btns) * (pos - 1)),
+                (self.button_width, self.button_height)), 0)
+            pygame.draw.rect(self.screen, self.not_active, (
+                (self.margin_hor, self.margin_vert + (self.button_height + self.btw_btns) * (pos - 1)),
+                (self.button_width, self.button_height)), 5)
+        else:
+            pygame.draw.rect(self.screen, self.not_active, (
+                (self.margin_hor, self.margin_vert + (self.button_height + self.btw_btns) * (pos - 1)),
+                (self.button_width, self.button_height)), 0)
+            pygame.draw.rect(self.screen, self.active_color, (
+                (self.margin_hor, self.margin_vert + (self.button_height + self.btw_btns) * (pos - 1)),
+                (self.button_width, self.button_height)), 5)
         if text is not None:
-            r = text.get_rect()
-            r.y = self.margin_vert + (self.button_height + self.btw_btns) * (pos - 1)
-            pygame.blit(text, r)
+            i = self.main_font.render(text, 1, (0, 0, 0))
+
+            r = i.get_rect()
+            r.x = self.margin_hor + self.button_width // 2 - r.width // 2
+            r.y = self.margin_vert + (self.button_height + self.btw_btns) * (
+                        pos - 1) + self.button_height // 2 - r.height // 2
+            self.screen.blit(i, r)
 
     def pass_coords(self, x, y):
         if x >= self.margin_hor and x <= self.margin_hor + self.button_width:

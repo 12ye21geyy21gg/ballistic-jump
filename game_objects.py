@@ -6,7 +6,7 @@ def load_image(name, colorkey=None):
     image = pygame.image.load(fullname).convert()
     if colorkey is not None:
         if colorkey == -1:
-            colorkey = image.get_at((0, 0))
+            colorkey = (255, 255, 255)
         image.set_colorkey(colorkey)
     else:
         image = image.convert_alpha()
@@ -63,7 +63,7 @@ class Object(pygame.sprite.Sprite):
 
 class Player(Object):
     def __init__(self, x, y, group):
-        super().__init__(x, y, 40, 50, group)
+        super().__init__(x, y, 26, 50, group)
         self.group = group
         self.prev_dist = 0
         self.v0 = 80.0
@@ -130,9 +130,9 @@ class Portal(Object):
 
     def set(self):
         if self.type == 1:
-            self.image = self.set_image('blue_portal.bmp', -1)
+            self.set_image('blue_portal.bmp', -1)
         elif self.type == 2:
-            self.image = self.set_image('orange_portal.bmp', -1)
+            self.set_image('orange_portal.bmp', -1)
 
 
 
