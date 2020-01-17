@@ -40,12 +40,63 @@ class Main:
             self.game.update()
 
 
+def load_image(name, color_key=None):
+    fullname = os.path.join('data', name)
+    try:
+        image = pygame.image.load(fullname).convert()
+    except pygame.error as message:
+        print('Cannot load image:', name)
+        raise SystemExit(message)
+
+    if color_key is not None:
+        if color_key == -1:
+            color_key = image.get_at((0, 0))
+        image.set_colorkey(color_key)
+    else:
+        image = image.convert_alpha()
+    return image
+
+
 if __name__ == '__main__':
 
     pygame.init()
-    pygame.display.set_caption('Ballistic Jumper')
     size = width, height = 1200, 700
     screen = pygame.display.set_mode(size)
+    temp_clock = pygame.time.Clock()
+    temp_time = 0
+    # title
+    f1 = pygame.font.Font(None, 130)
+    text1 = f1.render('Ballistic jumper', 1, (255, 100, 0))
+    f2 = pygame.font.Font(None, 50)
+    text2 = f2.render('Проект для Яндекс.Лицея', 1, (0, 0, 0))
+    f3 = pygame.font.Font(None, 50)
+    text3 = f3.render('Разработчики проекта:', 1, (0, 0, 0))
+    f4 = pygame.font.Font(None, 40)
+    text4 = f4.render('Егор Голубев', 1, (0, 0, 0))
+    f5 = pygame.font.Font(None, 40)
+    text5 = f4.render('Андрей Соловьёв', 1, (0, 0, 0))
+    f5 = pygame.font.Font(None, 40)
+    text6 = f4.render('Максим Шамко', 1, (0, 0, 0))
+
+    image = load_image("fon2.jpg")
+    rect = image.get_rect()
+    while temp_time < 5000:
+        screen.fill(pygame.Color("black"))
+        screen.blit(image, (0, -230))
+
+        screen.blit(text1, (260, 170))
+        screen.blit(text2, (350, 270))
+        screen.blit(text3, (385, 450))
+        screen.blit(text4, (470, 500))
+        screen.blit(text5, (440, 535))
+        screen.blit(text6, (470, 570))
+        pygame.display.flip()
+        temp_time += temp_clock.tick()
+    #
+
+
+    pygame.display.set_caption('Ballistic Jumper')
+
     main = Main(width, height, screen)
     main.prepare()
 
