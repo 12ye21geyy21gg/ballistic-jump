@@ -1,6 +1,9 @@
 import pygame, game_objects, main_menu, math
 
 
+def dist(x1, y1, x2, y2):
+    return math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
+
 class Graphical_Engine:
     def __init__(self, vw, vh, screen):
         self.view_width = vw
@@ -71,6 +74,7 @@ class Graphical_Engine:
             if len(self.temp_objects) > 0:
                 for i in self.temp_objects:
                     self.draw_object(i)
+            """
             if not self.isAiming or self.x == 1 or self.y == 1:
                 self.draw_object(self.player)
             else:
@@ -86,24 +90,31 @@ class Graphical_Engine:
                 self.cannon.c_rect.x = self.player.x - self.camera.x - self.cannon.w_rect.width // 2
                 self.cannon.w_rect.y = self.view_height - (self.player.y - self.camera.y) - self.cannon.w_rect.height
                 self.cannon.c_rect.y = self.view_height - (self.player.y - self.camera.y) - self.cannon.c_rect.height
-                w = self.cannon.w_rect.x + self.cannon.w_rect.width // 2  # self.cannon.c_rect.x + self.cannon.c_rect.width // 2 - self.cannon.w_rect.width // 2
-                h = self.cannon.w_rect.y + self.cannon.w_rect.height // 2  # self.cannon.c_rect.y + self.cannon.c_rect.height // 2 - self.cannon.w_rect.height // 2
+                x =  self.cannon.w_rect.x
+                y =  self.cannon.w_rect.y
+                #print(y)
                 a = math.atan2(-(self.x - self.get_rel_coords_center(self.player)[0]),
                                -(self.y - self.get_rel_coords_center(self.player)[1]))
                 self.cannon.cannon = pygame.transform.rotate(self.cannon.cannon, 90 + a * 180 / math.pi)
+
+                #self.cannon.c_rect.y = y + (self.cannon.c_rect.height // 3) - self.cannon.c_rect.height
+
                 self.cannon.c_rect = self.cannon.cannon.get_rect()
+                l = dist(0,0,self.cannon.c_rect.width,self.cannon.c_rect.height)
+                self.cannon.c_rect.x = x - self.cannon.c_rect.width // 4
+                self.cannon.c_rect.y = y + (self.cannon.c_rect.height // 3) - self.cannon.c_rect.height
+                #self.cannon.c_rect.y = y - self.cannon.c_rect.height // 4 * 3
 
                 if not self.y - self.get_rel_coords_center(self.player)[1] > 0:
 
-                    self.cannon.c_rect.x = w - self.cannon.c_rect.width // 2
-                    self.cannon.c_rect.y = h - self.cannon.c_rect.height // 2
-                    self.cannon.c_rect.y -= self.cannon.c_rect.height // 4
+
                     self.screen.blit(self.cannon.cannon, self.cannon.c_rect)
                     self.screen.blit(self.cannon.wheel, self.cannon.w_rect)
                 else:
                     self.draw_object(self.player)
-
-
+                
+            """
+            self.draw_object(self.player)
             if self.isAiming and self.x != -1 and self.y != -1:
                 pygame.draw.line(self.screen, pygame.Color('blue'), self.get_rel_coords_center(self.player),
                                  (self.x, self.y),

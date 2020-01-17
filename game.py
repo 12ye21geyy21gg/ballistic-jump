@@ -100,6 +100,7 @@ class Game:
                 self.move_player_hidden(dt)
             if self.map.player.x >= self.map_gen.prev_x - 2 * self.view_width:
                 self.map_gen.generate(self.map.platforms, self.map.bonuses, 50)
+                self.prep_imgs()
 
     def move_player_hidden(self, dt):
         self.map.player.x += self.map.player.vx * dt + (
