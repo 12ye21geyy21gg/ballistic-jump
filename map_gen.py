@@ -3,8 +3,8 @@ import random, game_objects, pygame
 
 class Map:
     def __init__(self, vw, vh, group):
-        self.platforms = list()  # [x,y,width,height]
-        self.bonuses = list()  # [x,y,type]
+        self.platforms = list()
+        self.bonuses = list()
         self.group = group
         self.player = game_objects.Player(10, 50, group)
         self.player.set_image('doodle.bmp', -1)
@@ -17,7 +17,7 @@ class Map:
         self.margin = self.view_width
         self.background = game_objects.Background(group)
 
-    def get_nearest_objects(self, px):  # px -> 0
+    def get_nearest_objects(self, px):
         plats = list()
         bonus = list()
         for i in self.platforms:
@@ -47,10 +47,8 @@ class Map:
         for i in self.platforms:
             if i.width <= 50:
                 i.set_image('small.bmp', -1)
-
             else:
                 i.set_image('big.bmp', -1)
-
             i.image = pygame.transform.scale(i.image, (i.width, i.height))
             i.rect = i.image.get_rect()
         for i in self.bonuses:
@@ -70,7 +68,6 @@ class Map:
         self.player.prev_dist = 0
         self.player.update_bonuses()
         self.platforms.append(game_objects.Platform(10, 20, 20, 30, self.group))
-
 
 
 class Map_Gen:
@@ -98,7 +95,6 @@ class Map_Gen:
             platforms.append(t)
         for i in range(N):
             if random.random() < self.bonus_chance:
-
                 isGood = False
                 while not isGood:
                     isGood = True
@@ -109,6 +105,5 @@ class Map_Gen:
                     for i in platforms:
                         if i.rel_pos(t) == 5:
                             isGood = False
-
                 bonuses.append(t)
         self.dx = 0

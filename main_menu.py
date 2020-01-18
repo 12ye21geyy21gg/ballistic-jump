@@ -36,17 +36,15 @@ class Main_Menu:
                 (self.button_width, self.button_height)), 5)
         if text is not None:
             i = self.main_font.render(text, 1, (0, 0, 0))
-
             r = i.get_rect()
             r.x = self.margin_hor + self.button_width // 2 - r.width // 2
             r.y = self.margin_vert + (self.button_height + self.btw_btns) * (
-                        pos - 1) + self.button_height // 2 - r.height // 2
+                    pos - 1) + self.button_height // 2 - r.height // 2
             self.screen.blit(i, r)
 
     def pass_coords(self, x, y):
         if x >= self.margin_hor and x <= self.margin_hor + self.button_width:
             if y >= self.margin_vert and y <= self.margin_vert + self.button_height:
-
                 return 1  # resume
             elif y >= self.margin_vert + (self.button_height + self.btw_btns) and y <= self.margin_vert + (
                     self.button_height + self.btw_btns) + self.button_height:

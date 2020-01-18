@@ -1,6 +1,3 @@
-import game_objects
-
-
 class Store:
     def __init__(self, num):
         self.max_num = num
@@ -12,7 +9,7 @@ class Store:
     def prepare(self):
         for i in range(self.max_num):
             if i == 0:
-                self.slots[i] = ['starting speed', 1, 1]  # name, level, price
+                self.slots[i] = ['starting speed', 1, 1]
             elif i == 1:
                 self.slots[i] = ['wind protection', 1, 1]
             elif i == 2:
@@ -41,8 +38,6 @@ class Store:
                 player.wind_protection += 0.1
                 if player.wind_protection > 1.0:
                     player.wind_protection = 1.0
-            else:
-                print('you have 100% куда больше защиты от ветра')
         elif num == 2:
             if self.slots[num][2] <= player.money:
                 player.money -= self.slots[num][2]
