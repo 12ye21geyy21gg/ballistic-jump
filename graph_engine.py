@@ -4,6 +4,7 @@ import pygame, game_objects, main_menu, math
 def dist(x1, y1, x2, y2):
     return math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
 
+
 class Graphical_Engine:
     def __init__(self, vw, vh, screen):
         self.view_width = vw
@@ -12,7 +13,7 @@ class Graphical_Engine:
         self.color = pygame.Color('black')
         self.menu = main_menu.Main_Menu(vw, vh, screen)
         self.temp_objects = list()
-        self.mode = 2  # 1 store, 2 game
+        self.mode = 2
         self.paused = True
         self.isAiming = False
         self.margin = 40
@@ -27,14 +28,13 @@ class Graphical_Engine:
         self.num_cols = 2
         self.num_rows = 4
         self.button_width = (self.view_width - 2 * self.margin - self.margin // 2 * (
-                    self.num_cols - 1)) // self.num_cols
+                self.num_cols - 1)) // self.num_cols
         self.button_height = (self.view_height - 2 * self.margin - self.margin // 2 * (
-                    self.num_rows - 1)) // self.num_rows
+                self.num_rows - 1)) // self.num_rows
         self.store_font = pygame.font.Font('data/FreeSans.ttf', 20)
         self.store_font.set_bold(True)
         self.active = None
         self.active_store = None
-
 
     def prepare(self, camera, map, store, group):
         self.store = store
@@ -44,6 +44,7 @@ class Graphical_Engine:
         self.background = self.map.background
         self.group = group
         self.cannon = game_objects.Cannon(self.group)
+
     def clear_screen(self):
         self.screen.fill((0, 0, 0))
 
@@ -65,7 +66,6 @@ class Graphical_Engine:
 
     def draw(self):
         self.clear_screen()
-
         if self.mode == 1:
             self.draw_background()
             self.draw_store()
@@ -74,46 +74,7 @@ class Graphical_Engine:
             if len(self.temp_objects) > 0:
                 for i in self.temp_objects:
                     self.draw_object(i)
-            """
-            if not self.isAiming or self.x == 1 or self.y == 1:
-                self.draw_object(self.player)
-            else:
-                if self.x - self.get_rel_coords_center(self.player)[0] > 0:
-                    self.cannon.cannon = pygame.transform.scale(self.cannon.c0, (150, 50))
-                else:
-                    self.cannon.cannon = pygame.transform.flip(self.cannon.c0, False, True)
 
-                self.cannon.c_rect = self.cannon.c0r
-                self.cannon.wheel = self.cannon.w0
-                self.cannon.w_rect = self.cannon.w0r
-                self.cannon.w_rect.x = self.player.x - self.camera.x
-                self.cannon.c_rect.x = self.player.x - self.camera.x - self.cannon.w_rect.width // 2
-                self.cannon.w_rect.y = self.view_height - (self.player.y - self.camera.y) - self.cannon.w_rect.height
-                self.cannon.c_rect.y = self.view_height - (self.player.y - self.camera.y) - self.cannon.c_rect.height
-                x =  self.cannon.w_rect.x
-                y =  self.cannon.w_rect.y
-                #print(y)
-                a = math.atan2(-(self.x - self.get_rel_coords_center(self.player)[0]),
-                               -(self.y - self.get_rel_coords_center(self.player)[1]))
-                self.cannon.cannon = pygame.transform.rotate(self.cannon.cannon, 90 + a * 180 / math.pi)
-
-                #self.cannon.c_rect.y = y + (self.cannon.c_rect.height // 3) - self.cannon.c_rect.height
-
-                self.cannon.c_rect = self.cannon.cannon.get_rect()
-                l = dist(0,0,self.cannon.c_rect.width,self.cannon.c_rect.height)
-                self.cannon.c_rect.x = x - self.cannon.c_rect.width // 4
-                self.cannon.c_rect.y = y + (self.cannon.c_rect.height // 3) - self.cannon.c_rect.height
-                #self.cannon.c_rect.y = y - self.cannon.c_rect.height // 4 * 3
-
-                if not self.y - self.get_rel_coords_center(self.player)[1] > 0:
-
-
-                    self.screen.blit(self.cannon.cannon, self.cannon.c_rect)
-                    self.screen.blit(self.cannon.wheel, self.cannon.w_rect)
-                else:
-                    self.draw_object(self.player)
-                
-            """
             self.draw_object(self.player)
             if self.isAiming and self.x != -1 and self.y != -1:
                 pygame.draw.line(self.screen, pygame.Color('blue'), self.get_rel_coords_center(self.player),
@@ -124,7 +85,6 @@ class Graphical_Engine:
                 x = self.x - self.get_rel_coords_center(self.player)[0]
                 y = self.y - self.get_rel_coords_center(self.player)[1]
                 length = math.sqrt(x ** 2 + y ** 2)
-
                 if length >= self.map.player.precision:
                     v0 = self.map.player.v0
                 else:
@@ -133,7 +93,6 @@ class Graphical_Engine:
                 x = self.get_rel_coords_center(self.player)[0]
                 y = self.get_rel_coords_center(self.player)[1]
                 font = pygame.font.Font(None, 30)
-
                 temp = font.render(f'speed: {round(abs(v0), 2)}', True,
                                    pygame.Color('blue'))
                 temp_r = temp.get_rect()
@@ -141,7 +100,7 @@ class Graphical_Engine:
                 temp_r.y = y - temp_r.height * 7
                 self.screen.blit(temp, temp_r)
                 pass
-            # print(self.map.wind_accel)
+
             if not self.paused:
                 self.draw_misc()
         if self.paused:
@@ -168,7 +127,6 @@ class Graphical_Engine:
                                                                                  self.button_height + self.margin // 2)),
                                                                         (self.button_width, self.button_height)), 5)
                 self.information_color = pygame.Color('#fccb76')
-
             if i < self.num_rows * self.num_cols - 1:
                 temp = self.store_font.render(f'{self.store.slots[i][0]}', True,
                                               self.information_color)
@@ -186,15 +144,14 @@ class Graphical_Engine:
                 temp_r.x = self.margin + self.margin + (i // self.num_rows) * (
                         self.button_width + self.margin // 2) + self.button_width // 2 - temp_r.width // 2
                 self.screen.blit(temp, temp_r)
-
             elif i == self.num_rows * self.num_cols - 1:
                 temp = self.store_font.render(f'your money:{self.map.player.money}', True,
                                               self.information_color)
                 temp_r = temp.get_rect()
                 temp_r.y = self.margin + (i % self.num_rows) * (
-                            self.button_height + self.margin // 2) + self.button_height // 2 - temp_r.height // 2
+                        self.button_height + self.margin // 2) + self.button_height // 2 - temp_r.height // 2
                 temp_r.x = self.margin + self.margin + (i // self.num_rows) * (
-                            self.button_width + self.margin // 2) + self.button_width // 2 - temp_r.width // 2
+                        self.button_width + self.margin // 2) + self.button_width // 2 - temp_r.width // 2
                 self.screen.blit(temp, temp_r)
             self.information_color = pygame.Color('#875704')
 
@@ -281,7 +238,6 @@ class Graphical_Engine:
         mxh += temp_r.height + self.text_margin
         draw_list.append((temp, temp_r))
         self.wind_scale = mxw
-
         pygame.draw.rect(self.screen, pygame.Color('#fccb76'), ((self.margin // 2, self.margin // 2), (
             mxw + self.margin + len(draw_list) * self.text_margin,
             mxh + self.text_margin)), 0)
@@ -289,7 +245,6 @@ class Graphical_Engine:
                          ((self.margin // 2, self.margin // 2),
                           (mxw + self.margin + len(draw_list) * self.text_margin,
                            mxh + self.text_margin)), 3)
-
         pygame.draw.line(self.screen, pygame.Color('purple'),
                          (self.margin, self.margin),
                          (self.margin + self.wind_scale, self.margin), 5)
@@ -307,7 +262,6 @@ class Graphical_Engine:
             prev_y += t.height + self.text_margin
             self.screen.blit(i[0], t)
 
-
     def draw_background(self):
         self.screen.blit(self.map.background.image, self.map.background.image.get_rect())
 
@@ -317,7 +271,6 @@ class Graphical_Engine:
             self.set_color_by_obj(obj)
             pygame.draw.rect(self.screen, self.color, (self.get_rel_coords(obj), (obj.width, obj.height)), 0)
         else:
-
             obj.connect_coords(self.view_height)
             image = obj.image
             if type(obj) is game_objects.Player:

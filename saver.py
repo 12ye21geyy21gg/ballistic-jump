@@ -1,6 +1,5 @@
 import os, pickle
 
-
 class Saver:
     def __init__(self):
         self.out = 'data/save.dat'

@@ -1,4 +1,4 @@
-import pygame, os, sys
+import pygame, os
 
 
 def load_image(name, colorkey=None):
@@ -22,13 +22,6 @@ class Object(pygame.sprite.Sprite):
         self.height = height
         self.r_pos = 6  # unknown
         self.image = None
-
-    """def collide(self, object):
-        if self.collide_rect(object):
-            return True
-        else:
-            return False # skip
-    """
 
     def set_image(self, image, ck):
         self.image = load_image(image, colorkey=ck)
@@ -87,6 +80,7 @@ class Player(Object):
         self.num_I = self.starter_I
         self.num_II = self.starter_II
         self.num_III = self.starter_III
+
     def calc_wind_accel(self, wind_a):
         return (1 - self.wind_protection) * wind_a
 
@@ -102,7 +96,7 @@ class Platform(Object):
 
 
 class Bonus(Object):
-    def __init__(self, x, y, type, group):  # type?
+    def __init__(self, x, y, type, group):
         super().__init__(x, y, 25, 25, group)
         self.type = type
         self.get_image_by_type()
@@ -120,8 +114,9 @@ class Portal(Object):
     def __init__(self, x, y, type, dur, group):
         super().__init__(x, y, 100, 50, group)
         self.type = type
-        self.dur = dur  # ms
+        self.dur = dur
         self.set()
+
     def check(self, dt):  # ms
         self.dur -= dt
         if self.dur < 0:
@@ -133,8 +128,6 @@ class Portal(Object):
             self.set_image('blue_portal.bmp', -1)
         elif self.type == 2:
             self.set_image('orange_portal.bmp', -1)
-
-
 
 
 class Camera:
